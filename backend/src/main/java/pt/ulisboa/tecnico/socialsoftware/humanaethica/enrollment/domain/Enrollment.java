@@ -1,12 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
+
+import java.time.LocalDateTime;
+
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "enrollment")
@@ -16,7 +19,7 @@ public class Enrollment {
     @Id
     private Integer id;
 
-    private String movitation;
+    private String motivation;
     private LocalDateTime enrollmentDateTime;
 
     @ManyToOne
@@ -28,16 +31,20 @@ public class Enrollment {
     public Enrollment(Activity activity, Volunteer volunteer, EnrollmentDto enrollmentDto) {
         setActivity(activity);
         setVolunteer(volunteer);
-        setMovitation(enrollmentDto.getMotivation());
+        setMotivation(enrollmentDto.getMotivation());
         setEnrollmentDateTime(DateHandler.toLocalDateTime(enrollmentDto.getEnrollmentDateTime()));
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     public Activity getActivity() {
@@ -58,19 +65,41 @@ public class Enrollment {
         volunteer.addEnrollment(this);
     }
 
-    public String getMovitation() {
-        return movitation;
+    public String getMotivation() {
+        return motivation;
     }
 
-    public void setMovitation(String movitation) {
-        this.movitation = movitation;
+    public void setEnrollmentDateTime(LocalDateTime enrollmentDateTime) {
+        this.enrollmentDateTime = enrollmentDateTime;
     }
 
     public LocalDateTime getEnrollmentDateTime() {
         return enrollmentDateTime;
     }
 
-    public void setEnrollmentDateTime(LocalDateTime enrollmentDateTime) {
-        this.enrollmentDateTime = enrollmentDateTime;
+
+    //TODO: verify if this is the correct way to do this 
+    private void verifyInvariants() {
+        motivationBigEnouth(); // should have more than 10 characters
+        volunteerCanOnlyApplyOnce(); // A volunteer can only apply once to an activity
+        applicationPeriodIsOpen(); // The application period is open
+    }
+
+    private void motivationBigEnouth() {
+        if (this.motivation.length() < 10) {
+            throw new HEException(MOTIVATION_TOO_SHORT, this.motivation);
+        }
+    }
+
+    private void volunteerCanOnlyApplyOnce() {
+        if (this.activity.getEnrollments().stream().anyMatch(e -> e.getVolunteer().equals(this.volunteer))) {
+            throw new HEException(VOLUNTEER_ALREADY_ENROLLED, "");
+        }
+    }
+
+    private void applicationPeriodIsOpen() {
+        if (this.activity.getApplicationDeadline().isAfter(LocalDateTime.now())) {
+            throw new HEException(APPLICATION_PERIOD_CLOSED, this.activity.getApplicationDeadline().toString());
+        }
     }
 }

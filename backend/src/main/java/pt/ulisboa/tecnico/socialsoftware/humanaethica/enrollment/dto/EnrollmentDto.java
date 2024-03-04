@@ -17,7 +17,7 @@ public class EnrollmentDto {
 
     public EnrollmentDto(Enrollment enrollment, boolean deepCopyActivity, boolean deepCopyVolunteer) {
         setId(enrollment.getId());
-        setMotivation(enrollment.getMovitation());
+        setMotivation(enrollment.getMotivation());
         setEnrollmentDateTime(DateHandler.toISOString(enrollment.getEnrollmentDateTime()));
 
         if (deepCopyActivity) {
