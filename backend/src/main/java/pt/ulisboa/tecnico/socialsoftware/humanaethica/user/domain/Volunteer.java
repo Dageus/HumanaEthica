@@ -48,7 +48,6 @@ public class Volunteer extends User {
 
     public void addEnrollment(Enrollment enrollment) {
         this.enrollments.add(enrollment);
-        enrollment.setVolunteer(this);
     }
 
     public void removeEnrollment(Enrollment enrollment) {

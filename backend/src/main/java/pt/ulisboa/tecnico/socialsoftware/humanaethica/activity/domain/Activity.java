@@ -52,8 +52,7 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(ActivityDto activityDto, Institution institution, List<Theme> themes,
-            List<Enrollment> enrollments) {
+    public Activity(ActivityDto activityDto, Institution institution, List<Theme> themes) {
         setInstitution(institution);
         setName(activityDto.getName());
         setRegion(activityDto.getRegion());
@@ -66,10 +65,6 @@ public class Activity {
 
         for (Theme theme : themes) {
             addTheme(theme);
-        }
-
-        for (Enrollment enrollment : enrollments) {
-            addEnrollment(enrollment);
         }
 
         verifyInvariants();
@@ -85,7 +80,6 @@ public class Activity {
         setApplicationDeadline(DateHandler.toLocalDateTime(activityDto.getApplicationDeadline()));
 
         setThemes(themes);
-        setEnrollments(enrollments);
 
         verifyInvariants();
     }
@@ -116,7 +110,6 @@ public class Activity {
 
     public void addEnrollment(Enrollment enrollment) {
         this.enrollments.add(enrollment);
-        enrollment.setActivity(this);
     }
 
     public void removeEnrollment(Enrollment enrollment) {

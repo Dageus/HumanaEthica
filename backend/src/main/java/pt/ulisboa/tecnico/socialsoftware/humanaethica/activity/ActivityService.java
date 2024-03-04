@@ -10,11 +10,13 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
@@ -22,7 +24,6 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ActivityService {
@@ -53,8 +54,7 @@ public class ActivityService {
 
         List<Theme> themes = getThemes(activityDto);
 
-        // TODO: change this
-        Activity activity = new Activity(activityDto, institution, themes, null);
+        Activity activity = new Activity(activityDto, institution, themes);
 
         activityRepository.save(activity);
 
@@ -123,4 +123,20 @@ public class ActivityService {
         return new ActivityDto(activity, true, true);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public EnrollmentDto createEnrollment(Integer userId, Integer activityId, EnrollmentDto enrollmentDto) {
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+
+        if (userId == null)
+            throw new HEException(USER_NOT_FOUND);
+        Volunteer volunteer = (Volunteer) userRepository.findById(userId)
+                .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
+
+        Enrollment enrollment = new Enrollment(activity, volunteer, enrollmentDto);
+
+        return new EnrollmentDto(enrollment, true, true);
+    }
 }

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @Transactional
@@ -19,6 +18,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     @Modifying
     @Query(value = "DELETE FROM activity_themes", nativeQuery = true)
     void deleteAllActivityTheme();
-
 
 }

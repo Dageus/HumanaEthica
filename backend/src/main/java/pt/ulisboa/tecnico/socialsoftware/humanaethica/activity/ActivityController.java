@@ -6,9 +6,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
 
 import java.security.Principal;
 import java.util.List;
@@ -19,7 +20,8 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ActivityController.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(ActivityController.class);
 
     @GetMapping()
     public List<ActivityDto> getActivities() {
@@ -28,14 +30,14 @@ public class ActivityController {
 
     @PostMapping()
     @PreAuthorize("(hasRole('ROLE_MEMBER'))")
-    public ActivityDto registerActivity(Principal principal, @Valid @RequestBody ActivityDto activityDto){
+    public ActivityDto registerActivity(Principal principal, @Valid @RequestBody ActivityDto activityDto) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return activityService.registerActivity(userId, activityDto);
     }
 
     @PutMapping("/{activityId}")
     @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
-    public ActivityDto updateActivity(@PathVariable int activityId, @Valid @RequestBody ActivityDto activityDto){
+    public ActivityDto updateActivity(@PathVariable int activityId, @Valid @RequestBody ActivityDto activityDto) {
         return activityService.updateActivity(activityId, activityDto);
     }
 
@@ -55,5 +57,15 @@ public class ActivityController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ActivityDto validateActivity(@PathVariable int activityId) {
         return activityService.validateActivity(activityId);
+    }
+
+    @PutMapping("/{activityId}/apply")
+    @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
+    public EnrollmentDto createEnrollment(
+            Principal principal,
+            @PathVariable Integer activityId,
+            @Valid @RequestBody EnrollmentDto enrollmentDto) {
+        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+        return activityService.createEnrollment(userId, activityId, enrollmentDto);
     }
 }

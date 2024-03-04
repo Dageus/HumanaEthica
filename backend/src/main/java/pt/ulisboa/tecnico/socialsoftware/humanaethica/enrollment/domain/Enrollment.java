@@ -46,6 +46,7 @@ public class Enrollment {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+        activity.addEnrollment(this);
     }
 
     public Volunteer getVolunteer() {
@@ -54,6 +55,7 @@ public class Enrollment {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
+        volunteer.addEnrollment(this);
     }
 
     public String getMovitation() {
