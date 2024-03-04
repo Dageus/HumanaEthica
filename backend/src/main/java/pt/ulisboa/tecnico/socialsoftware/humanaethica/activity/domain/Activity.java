@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain;
 
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
@@ -16,7 +17,9 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 @Entity
 @Table(name = "activity")
 public class Activity {
-    public enum State {REPORTED, APPROVED, SUSPENDED}
+    public enum State {
+        REPORTED, APPROVED, SUSPENDED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,12 +35,16 @@ public class Activity {
     @Enumerated(EnumType.STRING)
     private Activity.State state = Activity.State.APPROVED;
 
-    @ManyToMany (fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "activity_themes")
     private List<Theme> themes = new ArrayList<>();
 
     @ManyToOne
     private Institution institution;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "enrollments")
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -45,7 +52,8 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(ActivityDto activityDto, Institution institution, List<Theme> themes) {
+    public Activity(ActivityDto activityDto, Institution institution, List<Theme> themes,
+            List<Enrollment> enrollments) {
         setInstitution(institution);
         setName(activityDto.getName());
         setRegion(activityDto.getRegion());
@@ -58,6 +66,10 @@ public class Activity {
 
         for (Theme theme : themes) {
             addTheme(theme);
+        }
+
+        for (Enrollment enrollment : enrollments) {
+            addEnrollment(enrollment);
         }
 
         verifyInvariants();
@@ -73,13 +85,42 @@ public class Activity {
         setApplicationDeadline(DateHandler.toLocalDateTime(activityDto.getApplicationDeadline()));
 
         setThemes(themes);
+        setEnrollments(enrollments);
 
         verifyInvariants();
     }
 
-
     public Integer getId() {
         return id;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<Enrollment> newEnrollments) {
+        List<Enrollment> oldEnrollments = new ArrayList<>(this.enrollments);
+
+        newEnrollments.forEach(newEnrollment -> {
+            if (!this.enrollments.contains(newEnrollment)) {
+                addEnrollment(newEnrollment);
+            }
+        });
+
+        oldEnrollments.forEach(enrollment -> {
+            if (!newEnrollments.contains(enrollment)) {
+                removeEnrollment(enrollment);
+            }
+        });
+    }
+
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+        enrollment.setActivity(this);
+    }
+
+    public void removeEnrollment(Enrollment enrollment) {
+        this.enrollments.remove(enrollment);
     }
 
     public String getName() {
@@ -87,7 +128,7 @@ public class Activity {
     }
 
     public void setName(String name) {
-       this.name = name;
+        this.name = name;
     }
 
     public String getRegion() {
@@ -214,7 +255,7 @@ public class Activity {
         });
     }
 
-    public void addTheme (Theme theme) {
+    public void addTheme(Theme theme) {
         this.themes.add(theme);
         theme.addActivity(this);
     }
@@ -265,9 +306,9 @@ public class Activity {
         }
     }
 
-
     private void hasOneToFiveParticipants() {
-        if (this.participantsNumberLimit == null || this.participantsNumberLimit <= 0 || this.participantsNumberLimit > 5) {
+        if (this.participantsNumberLimit == null || this.participantsNumberLimit <= 0
+                || this.participantsNumberLimit > 5) {
             throw new HEException(ACTIVITY_SHOULD_HAVE_ONE_TO_FIVE_PARTICIPANTS);
         }
     }

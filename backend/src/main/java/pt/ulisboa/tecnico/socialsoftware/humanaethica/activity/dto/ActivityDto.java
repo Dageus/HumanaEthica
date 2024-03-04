@@ -1,10 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityDto {
@@ -19,12 +22,13 @@ public class ActivityDto {
     private String state;
     private String creationDate;
     private List<ThemeDto> themes;
+    private List<EnrollmentDto> enrollments;
     private InstitutionDto institution;
 
-    public ActivityDto(){
+    public ActivityDto() {
     }
 
-    public ActivityDto(Activity activity, boolean deepCopyInstitution){
+    public ActivityDto(Activity activity, boolean deepCopyInstitution, boolean deepCopyEnrollments) {
         setId(activity.getId());
         setName(activity.getName());
         setRegion(activity.getRegion());
@@ -32,7 +36,7 @@ public class ActivityDto {
         setDescription(activity.getDescription());
 
         this.themes = activity.getThemes().stream()
-                .map(theme->new ThemeDto(theme,false, true, false))
+                .map(theme -> new ThemeDto(theme, false, true, false))
                 .toList();
 
         setState(activity.getState().name());
@@ -42,9 +46,25 @@ public class ActivityDto {
         setApplicationDeadline(DateHandler.toISOString(activity.getApplicationDeadline()));
 
         if (deepCopyInstitution && (activity.getInstitution() != null)) {
-                setInstitution(new InstitutionDto(activity.getInstitution(), false, false));
-
+            setInstitution(new InstitutionDto(activity.getInstitution(), false, false));
         }
+
+        if (deepCopyEnrollments && (activity.getEnrollments() != null)) {
+            List<EnrollmentDto> enrollments = new ArrayList<>();
+
+            for (Enrollment enrollment : activity.getEnrollments()) {
+                enrollments.add(new EnrollmentDto(enrollment, false, false));
+            }
+            setEnrollments(enrollments);
+        }
+    }
+
+    public List<EnrollmentDto> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<EnrollmentDto> enrollments) {
+        this.enrollments = enrollments;
     }
 
     public void setThemes(List<ThemeDto> themes) {
@@ -71,10 +91,13 @@ public class ActivityDto {
         this.name = name;
     }
 
-    public String getRegion() { return region; }
+    public String getRegion() {
+        return region;
+    }
 
-    public void setRegion(String region) { this.region = region; }
-
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public String getDescription() {
         return description;

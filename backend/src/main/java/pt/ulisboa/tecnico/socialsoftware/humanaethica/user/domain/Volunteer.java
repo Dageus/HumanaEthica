@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain;
 
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,11 @@ import java.util.List;
 @Entity
 @DiscriminatorValue(User.UserTypes.VOLUNTEER)
 public class Volunteer extends User {
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "enrollments")
+    private List<Enrollment> enrollments = new ArrayList<>();
+
     public Volunteer() {
     }
 
@@ -19,5 +24,34 @@ public class Volunteer extends User {
 
     public Volunteer(String name, State state) {
         super(name, Role.VOLUNTEER, state);
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(List<Enrollment> newEnrollments) {
+        List<Enrollment> oldEnrollments = new ArrayList<>(this.enrollments);
+
+        newEnrollments.forEach(newEnrollment -> {
+            if (!this.enrollments.contains(newEnrollment)) {
+                addEnrollment(newEnrollment);
+            }
+        });
+
+        oldEnrollments.forEach(enrollment -> {
+            if (!newEnrollments.contains(enrollment)) {
+                removeEnrollment(enrollment);
+            }
+        });
+    }
+
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+        enrollment.setVolunteer(this);
+    }
+
+    public void removeEnrollment(Enrollment enrollment) {
+        this.enrollments.remove(enrollment);
     }
 }

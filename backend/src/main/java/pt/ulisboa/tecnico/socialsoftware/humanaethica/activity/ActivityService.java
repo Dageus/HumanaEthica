@@ -1,4 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.activity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -37,36 +38,41 @@ public class ActivityService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ActivityDto> getActivities() {
         return activityRepository.findAll().stream()
-                .map(activity-> new ActivityDto(activity,true))
+                .map(activity -> new ActivityDto(activity, true, true))
                 .sorted(Comparator.comparing(ActivityDto::getName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ActivityDto registerActivity(Integer userId, ActivityDto activityDto) {
-        if (userId == null) throw new HEException(USER_NOT_FOUND);
-        Member member = (Member) userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
+        if (userId == null)
+            throw new HEException(USER_NOT_FOUND);
+        Member member = (Member) userRepository.findById(userId)
+                .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
         Institution institution = member.getInstitution();
 
         List<Theme> themes = getThemes(activityDto);
 
-        Activity activity = new Activity(activityDto, institution, themes);
+        // TODO: change this
+        Activity activity = new Activity(activityDto, institution, themes, null);
 
         activityRepository.save(activity);
 
-        return new ActivityDto(activity, true);
+        return new ActivityDto(activity, true, true);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ActivityDto updateActivity(Integer activityId, ActivityDto activityDto) {
-        if (activityId == null) throw new HEException(ACTIVITY_NOT_FOUND);
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
 
         List<Theme> themes = getThemes(activityDto);
 
         activity.update(activityDto, themes);
 
-        return new ActivityDto(activity, false);
+        return new ActivityDto(activity, false, false);
     }
 
     private List<Theme> getThemes(ActivityDto activityDto) {
@@ -74,7 +80,8 @@ public class ActivityService {
         activityDto.getThemes().forEach(themeDto -> {
             if (themeDto.getId() == null)
                 throw new HEException(THEME_NOT_FOUND);
-            Theme theme = themeRepository.findById(themeDto.getId()).orElseThrow(() -> new HEException(THEME_NOT_FOUND));
+            Theme theme = themeRepository.findById(themeDto.getId())
+                    .orElseThrow(() -> new HEException(THEME_NOT_FOUND));
             themes.add(theme);
         });
         return themes;
@@ -82,32 +89,38 @@ public class ActivityService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ActivityDto suspendActivity(Integer activityId) {
-        if (activityId == null) throw new HEException(ACTIVITY_NOT_FOUND);
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND));
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND));
 
         activity.suspend();
 
-        return new ActivityDto(activity, true);
+        return new ActivityDto(activity, true, true);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ActivityDto reportActivity(Integer activityId) {
-        if (activityId == null) throw new HEException(ACTIVITY_NOT_FOUND);
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND));
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND));
 
         activity.report();
 
-        return new ActivityDto(activity, false);
+        return new ActivityDto(activity, false, false);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ActivityDto validateActivity(Integer activityId) {
-        if (activityId == null) throw new HEException(ACTIVITY_NOT_FOUND);
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
 
         activity.validate();
 
-        return new ActivityDto(activity, true);
+        return new ActivityDto(activity, true, true);
     }
 
 }

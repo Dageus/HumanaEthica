@@ -26,10 +26,10 @@ public class InstitutionDto {
 
     private List<ActivityDto> activityDto = new ArrayList<>();
 
-    public InstitutionDto(){
+    public InstitutionDto() {
     }
 
-    public InstitutionDto(Institution institution){
+    public InstitutionDto(Institution institution) {
         setId(institution.getId());
         setEmail(institution.getEmail());
         setName(institution.getName());
@@ -38,7 +38,7 @@ public class InstitutionDto {
         setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
     }
 
-    public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities){
+    public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities) {
         setId(institution.getId());
         setEmail(institution.getEmail());
         setName(institution.getName());
@@ -47,17 +47,17 @@ public class InstitutionDto {
         setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
         if (deepCopyThemes) {
             this.themeDto = institution.getThemes().stream()
-                    .map(theme-> new ThemeDto(theme,false, true, false))
+                    .map(theme -> new ThemeDto(theme, false, true, false))
                     .toList();
         }
         if (deepCopyActivities) {
             this.activityDto = institution.getActivities().stream()
-                    .map(activity-> new ActivityDto(activity,false))
+                    .map(activity -> new ActivityDto(activity, false, false))
                     .toList();
         }
     }
 
-    public InstitutionDto(RegisterInstitutionDto registerInstitutionDto){
+    public InstitutionDto(RegisterInstitutionDto registerInstitutionDto) {
         setEmail(registerInstitutionDto.getInstitutionEmail());
         setName(registerInstitutionDto.getInstitutionName());
         setNif(registerInstitutionDto.getInstitutionNif());
@@ -111,7 +111,7 @@ public class InstitutionDto {
         this.creationDate = creationDate;
     }
 
-    public List<ThemeDto>getThemes() {
+    public List<ThemeDto> getThemes() {
         return themeDto;
     }
 
@@ -119,7 +119,7 @@ public class InstitutionDto {
         this.themeDto = themeDto;
     }
 
-    public List<ActivityDto>getActivities() {
+    public List<ActivityDto> getActivities() {
         return activityDto;
     }
 
