@@ -43,10 +43,6 @@ public class Enrollment {
         return id;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
     public Activity getActivity() {
         return activity;
     }
