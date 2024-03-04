@@ -61,6 +61,10 @@ public class Enrollment {
         volunteer.addEnrollment(this);
     }
 
+    public void setMotivation(String motivation) {
+        this.motivation = motivation;
+    }
+
     public String getMotivation() {
         return motivation;
     }

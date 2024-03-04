@@ -139,4 +139,16 @@ public class ActivityService {
 
         return new EnrollmentDto(enrollment, true, true);
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<EnrollmentDto> getEnrollmentsByActivity(Integer activityId) {
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+
+        return activity.getEnrollments().stream()
+                .map(enrollment -> new EnrollmentDto(enrollment, true, true))
+                .toList();
+    }
 }

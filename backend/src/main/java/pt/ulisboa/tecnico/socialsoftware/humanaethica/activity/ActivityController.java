@@ -68,4 +68,11 @@ public class ActivityController {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return activityService.createEnrollment(userId, activityId, enrollmentDto);
     }
+
+    //List all enrollments of an activity
+    @GetMapping("/{activityId}/enrollments")
+    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
+    public List<EnrollmentDto> getActivityEnrollments(@PathVariable Integer activityId) {
+        return activityService.getEnrollmentsByActivity(activityId);
+    }    
 }
