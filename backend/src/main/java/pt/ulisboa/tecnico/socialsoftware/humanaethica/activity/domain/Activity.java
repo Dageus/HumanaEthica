@@ -40,7 +40,7 @@ public class Activity {
     @ManyToOne
     private Institution institution;
 
-    @OneToMany(mappedBy = "activity", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Participation> participations = new ArrayList<>();
 
     @Column(name = "creation_date")

@@ -3,9 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 
 @Repository
 @Transactional
-public interface ParticipationRepository extends JpaRepository<User, Integer> {
+public interface ParticipationRepository extends JpaRepository<Participation, Integer> {
+    @Query(value = "select * from participations u where u.id = lower(:id)", nativeQuery = true)
+    Optional<Participation> findById(@Param("id") Integer id);
 }

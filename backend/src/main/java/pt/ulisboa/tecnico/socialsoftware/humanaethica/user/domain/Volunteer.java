@@ -12,7 +12,7 @@ import java.util.List;
 @DiscriminatorValue(User.UserTypes.VOLUNTEER)
 public class Volunteer extends User {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "participation", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "volunteer", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Participation> participations = new ArrayList<>();
 
     public Volunteer() {

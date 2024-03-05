@@ -13,8 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import java.security.Principal;
 import java.util.List;
 
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.repository.ParticipationRepository;
@@ -27,7 +25,25 @@ public class ParticipationController {
     @Autowired
     private ParticipationService participationService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ParticipationController.class);
+    @Value("${figures.dir}")
+    private String figuresDir;
+
+    @GetMapping()
+    public List<ParticipationDto> getParticipations() {
+        return participationService.getParticipations();
+    }
+
+    @PostMapping()
+    @PreAuthorize("(hasRole('ROLE_MEMBER'))")
+    public ParticipationDto registerParticipation(Principal principal, @Valid @RequestBody ParticipationDto participationDto){
+        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+        return participationService.registerParticipation(userId, participationDto);
+    }
+
+    // TODO maybe needs more but i don't wanna half-ass this
+
+
+    // ? private static final Logger logger = LoggerFactory.getLogger(ParticipationController.class);
 
     
 }

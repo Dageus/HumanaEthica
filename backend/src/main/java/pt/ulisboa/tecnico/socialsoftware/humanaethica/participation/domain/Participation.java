@@ -9,8 +9,6 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.ACTIVITY_NAME_INVALID;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -39,7 +37,10 @@ public class Participation {
     @ManyToOne
     private Volunteer volunteer;
 
+    
     private Integer rating;
+
+    @Column(name = "creation_date")
     private LocalDateTime acceptanceDate;
 
     public Participation() {
@@ -49,17 +50,7 @@ public class Participation {
     public Participation(Activity activity, Volunteer volunteer, ParticipationDto participationDto) {
         setActivity(activity);
         setVolunteer(volunteer);
-        setRating(null);    
-        setAcceptanceDate(LocalDateTime.now());
-
-        verifyInvariants();
-    }
-
-    // Constructor
-    public Participation(Activity activity, Volunteer volunteer, ParticipationDto participationDto, Integer rating) {
-        setActivity(activity);
-        setVolunteer(volunteer);
-        setRating(rating);
+        setRating(participationDto.getRating());    
         setAcceptanceDate(LocalDateTime.now());
 
         verifyInvariants();

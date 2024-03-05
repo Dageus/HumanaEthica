@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.participation;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,32 @@ public class ParticipationService {
     ActivityRepository activityRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<ParticipationDto> getParticipationsByActivity(Integer activityId) {
+        return participationRepository.findAll().stream()
+                .filter(participation -> participation.getActivity().getId().equals(activityId))
+                .map(participation -> new ParticipationDto(participation, true, true))
+                .sorted(Comparator.comparing(ParticipationDto::getAcceptanceDate))
+                .toList();
+    }
+
+    public ParticipationDto createParticipation(Integer activityId, ParticipationDto participationDto) {
+        if (activityId == null)
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId)
+            .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+
+        if (participationDto.getVolunteerId() == null)
+            throw new HEException(VOLUNTEER_DOES_NOT_EXIST);
+
+        Volunteer volunteer = (Volunteer) userRepository.findById(participationDto.getVolunteerId())
+        .orElseThrow(() -> new HEException(VOLUNTEER_DOES_NOT_EXIST, participationDto.getVolunteerId()));
+
+
+        Participation participation = new Participation(activity, volunteer, participationDto);
+
+        return new ParticipationDto(participation, true, true);
+    }
 
 }
