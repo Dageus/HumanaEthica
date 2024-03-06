@@ -1,24 +1,42 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment;
 
-// import jakarta.validation.Valid;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.security.access.prepost.PreAuthorize;
-// import org.springframework.security.core.Authentication;
-// import org.springframework.web.bind.annotation.*;
-// import
-// pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-// import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
-// import java.security.Principal;
-// import java.util.List;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
 
-// // TODO not sure if this file is needed
+import java.security.Principal;
+import java.util.List;
 
-// @RestController
-// @RequestMapping("/enrollments")
-// public class EnrollmentController {
-// @Autowired
-// private EnrollmentService enrollmentService;
-// }
+@RestController
+@RequestMapping("/enrollments")
+public class EnrollmentController {
+    @Autowired
+    private EnrollmentService enrollmentService;
+
+    @GetMapping()
+    public List<EnrollmentDto> getEnrollments() {
+        return enrollmentService.getEnrollments();
+    }
+
+    @PutMapping("/{activityId}/apply")
+    @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
+    public EnrollmentDto createEnrollment(
+            Principal principal,
+            @PathVariable Integer activityId,
+            @Valid @RequestBody EnrollmentDto enrollmentDto) {
+        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+        return enrollmentService.createEnrollment(userId, activityId, enrollmentDto);
+    }
+
+    // List all enrollments of an activity
+    @GetMapping("/{activityId}/enrollments")
+    @PreAuthorize("hasRole('ROLE_MEMBER')")
+    public List<EnrollmentDto> getActivityEnrollments(@PathVariable Integer activityId) {
+        return enrollmentService.getEnrollmentsByActivity(activityId);
+    }
+}

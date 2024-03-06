@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto;
 
 import java.security.Principal;
 import java.util.List;
@@ -58,21 +57,4 @@ public class ActivityController {
     public ActivityDto validateActivity(@PathVariable int activityId) {
         return activityService.validateActivity(activityId);
     }
-
-    @PutMapping("/{activityId}/apply")
-    @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
-    public EnrollmentDto createEnrollment(
-            Principal principal,
-            @PathVariable Integer activityId,
-            @Valid @RequestBody EnrollmentDto enrollmentDto) {
-        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
-        return activityService.createEnrollment(userId, activityId, enrollmentDto);
-    }
-
-    //List all enrollments of an activity
-    @GetMapping("/{activityId}/enrollments")
-    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
-    public List<EnrollmentDto> getActivityEnrollments(@PathVariable Integer activityId) {
-        return activityService.getEnrollmentsByActivity(activityId);
-    }    
 }

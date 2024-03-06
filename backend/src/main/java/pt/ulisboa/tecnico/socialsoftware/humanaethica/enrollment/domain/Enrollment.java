@@ -15,14 +15,15 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 @Table(name = "enrollment")
 public class Enrollment {
 
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String motivation;
     private LocalDateTime enrollmentDateTime;
 
     @ManyToOne
+    @JoinColumn(name = "activity_id")
     private Activity activity;
 
     @ManyToOne
@@ -33,6 +34,8 @@ public class Enrollment {
         setVolunteer(volunteer);
         setMotivation(enrollmentDto.getMotivation());
         setEnrollmentDateTime(DateHandler.toLocalDateTime(enrollmentDto.getEnrollmentDateTime()));
+
+        verifyInvariants();
     }
 
     public void setId(Integer id) {
@@ -77,8 +80,6 @@ public class Enrollment {
         return enrollmentDateTime;
     }
 
-
-    //TODO: verify if this is the correct way to do this 
     private void verifyInvariants() {
         motivationBigEnouth(); // should have more than 10 characters
         volunteerCanOnlyApplyOnce(); // A volunteer can only apply once to an activity
@@ -98,7 +99,7 @@ public class Enrollment {
     }
 
     private void applicationPeriodIsOpen() {
-        if (this.activity.getApplicationDeadline().isAfter(LocalDateTime.now())) {
+        if (this.activity.getApplicationDeadline().isBefore(LocalDateTime.now())) {
             throw new HEException(APPLICATION_PERIOD_CLOSED, this.activity.getApplicationDeadline().toString());
         }
     }

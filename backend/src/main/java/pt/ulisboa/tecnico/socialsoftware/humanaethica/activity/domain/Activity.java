@@ -42,8 +42,7 @@ public class Activity {
     @ManyToOne
     private Institution institution;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "enrollments")
+    @OneToMany(mappedBy = "activity", fetch = FetchType.EAGER)
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(name = "creation_date")
