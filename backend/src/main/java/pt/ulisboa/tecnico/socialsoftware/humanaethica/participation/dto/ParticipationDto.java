@@ -37,7 +37,7 @@ public class ParticipationDto {
         return activityId;
     }
 
-    public UserDto getVolunteer() {
+    public UserDto getVolunteerId() {
         return volunteerId;
     }
 
