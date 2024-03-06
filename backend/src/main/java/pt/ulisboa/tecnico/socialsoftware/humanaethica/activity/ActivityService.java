@@ -8,9 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
@@ -110,4 +110,15 @@ public class ActivityService {
         return new ActivityDto(activity, true);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<ParticipationDto> getActivityParticipations(Integer activityId) {
+        if (activityId == null) 
+            throw new HEException(ACTIVITY_NOT_FOUND);
+        Activity activity = activityRepository.findById(activityId).
+        orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+        return activity.getParticipations().stream()
+                .map(participation -> new ParticipationDto(participation, false, false))
+                .sorted(Comparator.comparing(ParticipationDto::getAcceptanceDate))
+                .collect(Collectors.toList());
+    }
 }

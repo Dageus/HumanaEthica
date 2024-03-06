@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 
 import java.security.Principal;
 import java.util.List;
@@ -55,5 +56,11 @@ public class ActivityController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ActivityDto validateActivity(@PathVariable int activityId) {
         return activityService.validateActivity(activityId);
+    }
+
+    @GetMapping("/{activityId}/participations")
+    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
+    public List<ParticipationDto> getActivityParticipations(@PathVariable Integer activityId) {
+        return activityService.getActivityParticipations(activityId);
     }
 }

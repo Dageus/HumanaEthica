@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.participation;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -33,17 +34,15 @@ public class ParticipationController {
         return participationService.getParticipations();
     }
 
-    @PostMapping()
-    @PreAuthorize("(hasRole('ROLE_MEMBER'))")
-    public ParticipationDto registerParticipation(Principal principal, @Valid @RequestBody ParticipationDto participationDto){
-        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
-        return participationService.registerParticipation(userId, participationDto);
+    @GetMapping("/{activityId}")
+    public List<ParticipationDto> getParticipationsByActivity(@PathVariable Integer activityId) {
+        return participationService.getParticipationsByActivity(activityId);
     }
 
-    // TODO maybe needs more but i don't wanna half-ass this
-
-
-    // ? private static final Logger logger = LoggerFactory.getLogger(ParticipationController.class);
-
-    
+    // @PostMapping()
+    // @PreAuthorize("hasRole('ROLE_MEMBER')")
+    // public ParticipationDto registerParticipation(Principal principal, @Valid @RequestBody ParticipationDto participationDto){
+    //     int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+    //     return participationService.registerParticipation(userId, participationDto);
+    // }
 }

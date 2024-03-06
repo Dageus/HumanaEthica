@@ -5,12 +5,10 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 
-import java.util.List;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
@@ -52,6 +50,9 @@ public class Participation {
         setVolunteer(volunteer);
         setRating(participationDto.getRating());    
         setAcceptanceDate(LocalDateTime.now());
+
+        volunteer.addParticipation(this);
+        activity.addParticipation(this);
 
         verifyInvariants();
     }
@@ -95,7 +96,6 @@ public class Participation {
     }
 
     // Add more methods as needed
-
     private void activityIsRequired() {
         if (this.activity == null) {
             throw new HEException(ACTIVITY_DOES_NOT_EXIST);
@@ -132,6 +132,26 @@ public class Participation {
         ratingIsRequired();
         acceptanceDateIsRequired();
         acceptanceDateCannotBeInTheFuture();
+        participantsLessThanLimit();
+        volunteerAlreadyParticipated();
+        enrollmentProcessOngoing();
     }
 
+    private void participantsLessThanLimit() {
+        if (activity.getParticipations().size() > activity.getParticipantsNumberLimit()) {
+            throw new HEException(ACTIVITY_PARTICIPANTS_EXCEED_LIMIT);
+        }
+    }
+
+    private void volunteerAlreadyParticipated() {
+        if (activity.getParticipations().stream().anyMatch(participation -> participation.getVolunteer().equals(volunteer))) {
+            throw new HEException(VOLUNTEER_ALREADY_PARTICIPATED);
+        }
+    }
+
+    private void enrollmentProcessOngoing() {
+        if (activity.getApplicationDeadline().isBefore(LocalDateTime.now())) {
+            throw new HEException(ENROLLMENT_PROCESS_ONGOING);
+        }
+    }
 }

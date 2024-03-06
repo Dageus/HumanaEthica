@@ -30,6 +30,14 @@ public class ParticipationService {
     UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<ParticipationDto> getParticipations() {
+        return participationRepository.findAll().stream()
+                .map(participation -> new ParticipationDto(participation, true, true))
+                .sorted(Comparator.comparing(ParticipationDto::getAcceptanceDate))
+                .toList();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ParticipationDto> getParticipationsByActivity(Integer activityId) {
         return participationRepository.findAll().stream()
                 .filter(participation -> participation.getActivity().getId().equals(activityId))
@@ -38,6 +46,7 @@ public class ParticipationService {
                 .toList();
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ParticipationDto createParticipation(Integer activityId, ParticipationDto participationDto) {
         if (activityId == null)
             throw new HEException(ACTIVITY_NOT_FOUND);

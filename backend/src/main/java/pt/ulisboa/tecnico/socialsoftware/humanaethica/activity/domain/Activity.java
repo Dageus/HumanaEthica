@@ -228,6 +228,19 @@ public class Activity {
         theme.removeActivity(this);
     }
 
+    public void setParticipations(List<Participation> participations) {
+        this.participations = participations;
+    }
+
+    public List<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void addParticipation(Participation participation) {
+        this.participations.add(participation);
+        participation.setActivity(this);
+    }
+
     public void setInstitution(Institution institution) {
         this.institution = institution;
         institution.addActivity(this);

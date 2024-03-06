@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain;
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,4 +24,18 @@ public class Volunteer extends User {
     public Volunteer(String name, State state) {
         super(name, Role.VOLUNTEER, state);
     }
+
+    public List<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(List<Participation> participations) {
+        this.participations = participations;
+    }
+
+    public void addParticipation(Participation participation) {
+        this.participations.add(participation);
+        participation.setVolunteer(this);
+    }
+
 }

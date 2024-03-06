@@ -47,7 +47,10 @@ public enum ErrorMessage {
     RATING_DOES_NOT_EXIST("Rating does not exist"),
     ACCEPTANCE_DATE_DOES_NOT_EXIST("Acceptance date does not exist"),
     ACCEPTANCE_DATE_CANNOT_BE_IN_THE_FUTURE("Acceptance date cannot be in the future"),
-    USER_NOT_VOLUNTEER("User is not a volunteer");
+    USER_NOT_VOLUNTEER("User is not a volunteer"),
+    ACTIVITY_PARTICIPANTS_EXCEED_LIMIT("Activity participants exceed limit"),
+    VOLUNTEER_ALREADY_PARTICIPATED("Volunteer already participated in this activity"),
+    ENROLLMENT_PROCESS_ONGOING("Volunteer can't be selected while enrollment process is ongoing");
 
     public final String label;
 
