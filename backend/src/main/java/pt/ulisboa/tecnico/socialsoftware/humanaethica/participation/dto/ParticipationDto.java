@@ -7,8 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 public class ParticipationDto {
     private Integer id;
-    private ActivityDto activityId;
-    private UserDto volunteerId;
+    private ActivityDto activity;
+    private UserDto volunteer;
     private Integer rating;
     private String acceptanceDate;
 
@@ -34,11 +34,11 @@ public class ParticipationDto {
     }
 
     public ActivityDto getActivity() {
-        return activityId;
+        return activity;
     }
 
-    public UserDto getVolunteerId() {
-        return volunteerId;
+    public UserDto getVolunteer() {
+        return volunteer;
     }
 
     public Integer getRating() {
@@ -53,12 +53,12 @@ public class ParticipationDto {
         this.id = id;
     }
 
-    public void setActivity(ActivityDto activityId) {
-        this.activityId = activityId;
+    public void setActivity(ActivityDto activity) {
+        this.activity = activity;
     }
 
-    public void setVolunteer(UserDto volunteerId) {
-        this.volunteerId = volunteerId;
+    public void setVolunteer(UserDto volunteer) {
+        this.volunteer = volunteer;
     }
 
     public void setRating(Integer rating) {
@@ -73,8 +73,8 @@ public class ParticipationDto {
     public String toString() {
         return "ParticipationDto{" +
                 "id=" + id +
-                ", activityId=" + activityId +
-                ", volunteerId=" + volunteerId +
+                ", activity=" + activity +
+                ", volunteer=" + volunteer +
                 ", rating=" + rating +
                 ", acceptanceDate='" + acceptanceDate + '\'' +
                 '}';

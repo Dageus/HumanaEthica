@@ -53,11 +53,11 @@ public class ParticipationService {
         Activity activity = activityRepository.findById(activityId)
             .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
 
-        if (participationDto.getVolunteerId() == null)
+        if (participationDto.getVolunteer() == null)
             throw new HEException(VOLUNTEER_DOES_NOT_EXIST);
 
-        Volunteer volunteer = (Volunteer) userRepository.findById(participationDto.getVolunteerId())
-        .orElseThrow(() -> new HEException(VOLUNTEER_DOES_NOT_EXIST, participationDto.getVolunteerId()));
+        Volunteer volunteer = (Volunteer) userRepository.findById(participationDto.getVolunteer().getId())
+        .orElseThrow(() -> new HEException(VOLUNTEER_DOES_NOT_EXIST));
 
 
         Participation participation = new Participation(activity, volunteer, participationDto);
