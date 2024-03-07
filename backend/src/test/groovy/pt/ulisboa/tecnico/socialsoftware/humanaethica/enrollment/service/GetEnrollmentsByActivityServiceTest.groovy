@@ -14,6 +14,8 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 
 @DataJpaTest
 class GetEnrollmentsByActivityServiceTest extends SpockTest {
+    private Activity activity
+
     def setup() {
         def institution = institutionService.getDemoInstitution()
         given: "activity info"
@@ -23,8 +25,8 @@ class GetEnrollmentsByActivityServiceTest extends SpockTest {
         def themes = new ArrayList<>()
         themes.add(createTheme(THEME_NAME_1, Theme.State.APPROVED,null))
         and: "an activity"
-        def activity = new Activity(activityDto, institution, themes)
-        activityRepository.save(activity)
+        activity = new Activity(activityDto, institution, themes)
+        activity = activityRepository.save(activity)
         and: "user info"
         def volunteer_1 = createVolunteer(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.NORMAL, User.State.ACTIVE)  
         and: "another user info"
@@ -43,7 +45,7 @@ class GetEnrollmentsByActivityServiceTest extends SpockTest {
 
     def 'get two enrollments'() {
         when:
-        def result = enrollmentService.getEnrollmentsByActivity(1)
+        def result = enrollmentService.getEnrollmentsByActivity(activity.id)
 
         then:
         result.size() == 2

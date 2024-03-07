@@ -30,6 +30,10 @@ public class Enrollment {
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 
+    public Enrollment() {
+
+    }
+
     public Enrollment(Activity activity, Volunteer volunteer, EnrollmentDto enrollmentDto) {
         setActivity(activity);
         setVolunteer(volunteer);

@@ -23,7 +23,7 @@ public class EnrollmentController {
         return enrollmentService.getEnrollments();
     }
 
-    @PostMapping("/{activityId}/apply")
+    @PostMapping("/activities/{activityId}/apply")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public EnrollmentDto createEnrollment(
             Principal principal,
@@ -34,7 +34,7 @@ public class EnrollmentController {
     }
 
     // List all enrollments of an activity
-    @GetMapping("/{activityId}/enrollments")
+    @GetMapping("/activities/{activityId}/enrollments")
     @PreAuthorize("hasRole('ROLE_MEMBER')")
     public List<EnrollmentDto> getActivityEnrollments(@PathVariable Integer activityId) {
         return enrollmentService.getEnrollmentsByActivity(activityId);
