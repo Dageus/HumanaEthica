@@ -81,6 +81,7 @@ public class Enrollment {
         return enrollmentDateTime;
     }
 
+
     private void verifyInvariants() {
         motivationBigEnouth(); // should have more than 10 characters
         volunteerCanOnlyApplyOnce(); // A volunteer can only apply once to an activity
@@ -98,7 +99,7 @@ public class Enrollment {
                 .anyMatch(e -> e.getVolunteer().equals(this.volunteer) && e != this)) {
             throw new HEException(VOLUNTEER_ALREADY_ENROLLED, "");
         }
-    }
+    }    
 
     private void applicationPeriodIsOpen() {
         if (this.activity.getApplicationDeadline().isBefore(LocalDateTime.now())) {

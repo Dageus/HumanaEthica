@@ -88,7 +88,7 @@ public class Activity {
     }
 
     public List<Enrollment> getEnrollments() {
-        return enrollments;
+        return this.enrollments;
     }
 
     public void setEnrollments(List<Enrollment> newEnrollments) {
