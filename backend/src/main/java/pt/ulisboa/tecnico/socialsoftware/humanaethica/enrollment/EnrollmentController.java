@@ -23,7 +23,7 @@ public class EnrollmentController {
         return enrollmentService.getEnrollments();
     }
 
-    @PutMapping("/{activityId}/apply")
+    @PostMapping("/{activityId}/apply")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public EnrollmentDto createEnrollment(
             Principal principal,

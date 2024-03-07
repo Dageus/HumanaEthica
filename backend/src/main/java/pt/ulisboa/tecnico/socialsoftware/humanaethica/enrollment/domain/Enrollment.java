@@ -27,6 +27,7 @@ public class Enrollment {
     private Activity activity;
 
     @ManyToOne
+    @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 
     public Enrollment(Activity activity, Volunteer volunteer, EnrollmentDto enrollmentDto) {
@@ -93,7 +94,8 @@ public class Enrollment {
     }
 
     private void volunteerCanOnlyApplyOnce() {
-        if (this.activity.getEnrollments().stream().anyMatch(e -> e.getVolunteer().equals(this.volunteer))) {
+        if (this.activity.getEnrollments().stream()
+                .anyMatch(e -> e.getVolunteer().equals(this.volunteer) && e != this)) {
             throw new HEException(VOLUNTEER_ALREADY_ENROLLED, "");
         }
     }

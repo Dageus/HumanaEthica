@@ -28,6 +28,8 @@ public enum ErrorMessage {
     THEME_NOT_APPROVED("Theme %s is not yet approved"),
 
     // Activity
+    ACTIVITY_ID_INVALID("%d is not a valid ID"),
+    ACTIVITY_ID_NULL("ID is null"),
     ACTIVITY_NOT_FOUND("Activity not found with id %d"),
     ACTIVITY_NAME_INVALID("Activity Name: %s, is not valid"),
     ACTIVITY_REGION_NAME_INVALID("Region Name: %s, is not valid"),
@@ -45,7 +47,7 @@ public enum ErrorMessage {
     MOTIVATION_TOO_SHORT("Motivation is too short: %s"),
     VOLUNTEER_ALREADY_ENROLLED("Volunteer already applied to this activity"),
     APPLICATION_PERIOD_CLOSED("Application period closed: %s");
-    
+
     public final String label;
 
     ErrorMessage(String label) {

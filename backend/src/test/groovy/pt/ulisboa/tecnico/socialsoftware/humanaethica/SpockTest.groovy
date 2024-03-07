@@ -21,6 +21,11 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionSer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.EnrollmentService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.repository.EnrollmentRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
@@ -168,6 +173,13 @@ class SpockTest extends Specification {
         return member
     }
 
+    def createVolunteer(name, userName, password, email, type, state) {
+        def volunteer = new Volunteer(name, userName, email, type, state)
+        volunteer.getAuthUser().setPassword(passwordEncoder.encode(password))
+        userRepository.save(volunteer)
+        return volunteer
+    }
+
     // theme
 
     public static final String THEME_NAME_1 = "THEME_NAME 1"
@@ -214,6 +226,25 @@ class SpockTest extends Specification {
         activityDto
     }
 
+    // enrollment
+    public static final String ENROLLMENT_MOTIVATION_1 = "enrollment motivation 1"
+    public static final String ENROLLMENT_MOTIVATION_2 = "enrollment motivation 2"
+
+    @Autowired
+    EnrollmentRepository enrollmentRepository
+
+    @Autowired
+    EnrollmentService enrollmentService
+
+    protected EnrollmentDto createEnrollmentDto(motivation, enrollmentDateTime, activityDto, userDto) {
+        def enrollmentDto = new EnrollmentDto()
+        enrollmentDto.setMotivation(motivation)
+        enrollmentDto.setEnrollmentDateTime(DateHandler.toISOString(enrollmentDateTime))
+        enrollmentDto.setActivity(activityDto)
+        enrollmentDto.setVolunteer(userDto)
+        enrollmentDto
+    }
+
     // clean database
 
     def deleteAll() {
@@ -224,6 +255,4 @@ class SpockTest extends Specification {
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
     }
-
-
 }
