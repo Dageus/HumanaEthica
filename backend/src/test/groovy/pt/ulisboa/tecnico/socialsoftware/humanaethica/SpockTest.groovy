@@ -9,6 +9,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.dto.AuthDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.dto.AuthPasswordDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.demo.DemoService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.demo.DemoUtils
@@ -214,6 +217,17 @@ class SpockTest extends Specification {
         activityDto
     }
 
+    // participation
+
+    protected ParticipationDto(rating, acceptanceDate, activityDto, userDto) {
+        def participationDto = new ParticipationDto()
+        participationDto.setRating(rating)
+        participationDto.setAcceptanceDate(DateHandler.toISOString(acceptanceDate))
+        participationDto.setActivity(activityDto)
+        participationDto.setVolunteer(userDto)
+        participationDto
+    }
+
     // clean database
 
     def deleteAll() {
@@ -224,6 +238,5 @@ class SpockTest extends Specification {
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
     }
-
 
 }

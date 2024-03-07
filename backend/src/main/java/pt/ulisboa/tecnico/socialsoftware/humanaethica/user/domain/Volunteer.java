@@ -11,7 +11,7 @@ import java.util.List;
 @DiscriminatorValue(User.UserTypes.VOLUNTEER)
 public class Volunteer extends User {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "volunteer", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "volunteer", fetch = FetchType.EAGER)
     private List<Participation> participations = new ArrayList<>();
 
     public Volunteer() {
@@ -35,7 +35,10 @@ public class Volunteer extends User {
 
     public void addParticipation(Participation participation) {
         this.participations.add(participation);
-        participation.setVolunteer(this);
+    }
+
+    public void removeParticipation(Participation participation) {
+        this.participations.remove(participation);
     }
 
 }

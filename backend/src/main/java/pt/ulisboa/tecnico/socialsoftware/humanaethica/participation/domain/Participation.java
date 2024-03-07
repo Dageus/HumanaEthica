@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 import jakarta.persistence.*;
 
@@ -34,7 +35,6 @@ public class Participation {
 
     @ManyToOne
     private Volunteer volunteer;
-
     
     private Integer rating;
 
@@ -49,10 +49,10 @@ public class Participation {
         setActivity(activity);
         setVolunteer(volunteer);
         setRating(participationDto.getRating());    
-        setAcceptanceDate(LocalDateTime.now());
+        setAcceptanceDate(DateHandler.toLocalDateTime(participationDto.getAcceptanceDate()));
 
-        volunteer.addParticipation(this);
-        activity.addParticipation(this);
+        // volunteer.addParticipation(this);
+        // activity.addParticipation(this);
 
         verifyInvariants();
     }
@@ -81,10 +81,12 @@ public class Participation {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+        activity.addParticipation(this);
     }
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
+        volunteer.addParticipation(this);
     }
 
     public void setRating(Integer rating) {
@@ -131,26 +133,26 @@ public class Participation {
         volunteerIsRequired();
         ratingIsRequired();
         acceptanceDateIsRequired();
-        acceptanceDateCannotBeInTheFuture();
-        participantsLessThanLimit();
+        //acceptanceDateCannotBeInTheFuture();
+        participantsMoreThanLimit();
         volunteerAlreadyParticipated();
         enrollmentProcessOngoing();
     }
 
-    private void participantsLessThanLimit() {
+    private void participantsMoreThanLimit() {
         if (activity.getParticipations().size() > activity.getParticipantsNumberLimit()) {
             throw new HEException(ACTIVITY_PARTICIPANTS_EXCEED_LIMIT);
         }
     }
 
     private void volunteerAlreadyParticipated() {
-        if (activity.getParticipations().stream().anyMatch(participation -> participation.getVolunteer().equals(volunteer))) {
+        if (activity.getParticipations().stream().anyMatch(participation -> participation.getVolunteer().getId().equals(volunteer.getId()))) {
             throw new HEException(VOLUNTEER_ALREADY_PARTICIPATED);
         }
     }
 
     private void enrollmentProcessOngoing() {
-        if (activity.getApplicationDeadline().isBefore(LocalDateTime.now())) {
+        if (activity.getApplicationDeadline().isAfter(LocalDateTime.now())) {
             throw new HEException(ENROLLMENT_PROCESS_ONGOING);
         }
     }
