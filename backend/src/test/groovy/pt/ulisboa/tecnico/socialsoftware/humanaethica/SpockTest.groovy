@@ -171,6 +171,13 @@ class SpockTest extends Specification {
         return member
     }
 
+    def createVolunteer(name, userName, password, email, type, state) {
+        def volunteer = new Volunteer(name, userName, email, type, state)
+        volunteer.getAuthUser().setPassword(passwordEncoder.encode(password))
+        userRepository.save(volunteer)
+        return volunteer
+    }
+
     // theme
 
     public static final String THEME_NAME_1 = "THEME_NAME 1"
