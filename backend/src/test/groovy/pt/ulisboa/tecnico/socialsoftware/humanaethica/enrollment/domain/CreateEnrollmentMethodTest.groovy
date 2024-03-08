@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
