@@ -20,6 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.EnrollmentService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentService
+
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -78,6 +80,11 @@ class BeanConfiguration {
     ActivityService activityService() {
         return new ActivityService()
     }
+
+    @Bean
+    AssessmentService assessmentService() {
+        return new AssessmentService()
+    } 
 
     @Bean
     PasswordEncoder passwordEncoder() {

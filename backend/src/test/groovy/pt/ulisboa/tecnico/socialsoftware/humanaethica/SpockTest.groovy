@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.repository.AuthUserRe
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.demo.DemoService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member
@@ -26,10 +27,14 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollme
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.dto.EnrollmentDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.repository.EnrollmentRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -197,6 +202,12 @@ class SpockTest extends Specification {
         theme
     }
 
+    protected ThemeDto createThemeDto(name){
+        def themeDto = new ThemeDto()
+        themeDto.setName(name)
+        themeDto
+    }
+
     // activity
 
     public static final String ACTIVITY_NAME_1 = "activity name 1"
@@ -245,10 +256,26 @@ class SpockTest extends Specification {
         enrollmentDto
     }
 
+    // assessment
+    public static final String ASSESSMENT_VALID_REVIEW = "This is a valid review with more than 10 characters."
+
+    @Autowired
+    AssessmentRepository assessmentRepository
+
+    @Autowired
+    AssessmentService assessmentService
+
+    protected AssessmentDto createAssessmentDto(review) {
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setReview(review)
+        assessmentDto
+    }
+
     // clean database
 
     def deleteAll() {
         enrollmentRepository.deleteAll()
+        assessmentRepository.deleteAll()
         activityRepository.deleteAllActivityTheme()
         activityRepository.deleteAll()
         authUserRepository.deleteAll()
