@@ -33,7 +33,7 @@ class CreateParticipationMethodTest extends SpockTest {
         volunteer.getId() >> 1
         participationDto = new ParticipationDto()
         participationDto.setRating(5);
-        participationDto.setAcceptanceDate(DateHandler.toISOString(IN_ONE_DAY));
+        participationDto.setAcceptanceDate(DateHandler.toISOString(NOW));
     }
 
     def "create participation with activity and volunteer"(){
@@ -50,18 +50,21 @@ class CreateParticipationMethodTest extends SpockTest {
         participation.getActivity() == activity
         participation.getVolunteer() == volunteer
         participation.getRating() == 5
+        participation.getAcceptanceDate() == DateHandler.toISOString(NOW)
         
         // and: "invocations"
         // 1 * activity.addParticipation(_)
         // 1 * volunteer.addParticipation(_)
     }
 
+
     def "create participation and violate invariants number of participants is more than limit of activity"() {
         given:
         activity.getParticipantsNumberLimit() >> 1
+        otherParticipation.getVolunteer() >> volunteer
+        otherParticipation.getActivity() >> activity
         activity.getParticipations() >> [otherParticipation]
         volunteer.getParticipations() >> [otherParticipation]
-        volunteer.getParticipations().size() >> 1
 
         when:
         new Participation(activity, volunteer, participationDto)
@@ -74,7 +77,6 @@ class CreateParticipationMethodTest extends SpockTest {
         errorMessage = ErrorMessage.ACTIVITY_PARTICIPANTS_EXCEED_LIMIT
     }
 
-    @Unroll
     def "create participation and violate invariants participant can only be selected after enrollment period is over"() {
         given:
         activity.applicationDeadline >> IN_TWO_DAYS
@@ -97,7 +99,6 @@ class CreateParticipationMethodTest extends SpockTest {
         errorMessage = ErrorMessage.ENROLLMENT_PROCESS_ONGOING
     }
 
-    @Unroll
     def "create participation and violate invariants volunteer can only participate once in an activity"() {
         given:
         volunteer.getId() >> 1

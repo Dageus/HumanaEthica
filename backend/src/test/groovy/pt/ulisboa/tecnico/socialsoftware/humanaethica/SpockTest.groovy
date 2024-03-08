@@ -219,7 +219,10 @@ class SpockTest extends Specification {
 
     // participation
 
-    protected ParticipationDto(rating, acceptanceDate, activityDto, userDto) {
+    public static final Integer RATING_1 = 4
+    public static final Integer RATING_2 = 5
+
+    protected createParticipationDto(rating, acceptanceDate, activityDto, userDto) {
         def participationDto = new ParticipationDto()
         participationDto.setRating(rating)
         participationDto.setAcceptanceDate(DateHandler.toISOString(acceptanceDate))
