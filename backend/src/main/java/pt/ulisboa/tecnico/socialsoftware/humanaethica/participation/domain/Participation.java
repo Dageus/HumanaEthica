@@ -52,9 +52,6 @@ public class Participation {
         setRating(participationDto.getRating());    
         setAcceptanceDate(DateHandler.toLocalDateTime(participationDto.getAcceptanceDate()));
 
-        // volunteer.addParticipation(this);
-        // activity.addParticipation(this);
-
         verifyInvariants();
     }
 

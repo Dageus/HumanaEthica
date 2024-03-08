@@ -32,8 +32,8 @@ class GetParticipationsByActivityServiceWebServiceIT extends SpockTest {
 
         def institution = institutionService.getDemoInstitution()
         given: "activity info"
-        def activityDto = createActivityDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,1,ACTIVITY_DESCRIPTION_1,
-                IN_ONE_DAY,IN_TWO_DAYS,IN_THREE_DAYS,null)
+        def activityDto = createActivityDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,3,ACTIVITY_DESCRIPTION_1,
+                ONE_DAY_AGO,IN_TWO_DAYS,IN_THREE_DAYS,null)
         and: "a theme"
         def themes = new ArrayList<>()
         themes.add(createTheme(THEME_NAME_1, Theme.State.APPROVED,null))
@@ -61,7 +61,7 @@ class GetParticipationsByActivityServiceWebServiceIT extends SpockTest {
         demoMemberLogin()
         when:
         def response = webClient.get()
-                .uri('/participations/activities/' + activity.id + '/participations')
+                .uri('/participations/' + activity.id + '/participations')
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToFlux(ParticipationDto.class)
@@ -83,7 +83,7 @@ class GetParticipationsByActivityServiceWebServiceIT extends SpockTest {
         demoVolunteerLogin()
         when:
         def response = webClient.get()
-                .uri('/participations/activities/' + activity.id + '/participations')
+                .uri('/participations/' + activity.id + '/participations')
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToFlux(ParticipationDto.class)

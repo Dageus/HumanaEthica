@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository;
@@ -61,8 +60,11 @@ public class ParticipationService {
     public ParticipationDto createParticipation(Integer activityId, ParticipationDto participationDto) {
         if (activityId == null)
             throw new HEException(ACTIVITY_NOT_FOUND);
+        if (activityId <= 0)
+            throw new HEException(ACTIVITY_ID_INVALID, activityId);
+
         Activity activity = activityRepository.findById(activityId)
-            .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+        .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND));
 
         if (participationDto.getVolunteer() == null)
             throw new HEException(VOLUNTEER_DOES_NOT_EXIST);
@@ -70,8 +72,9 @@ public class ParticipationService {
         Volunteer volunteer = (Volunteer) userRepository.findById(participationDto.getVolunteer().getId())
         .orElseThrow(() -> new HEException(VOLUNTEER_DOES_NOT_EXIST));
 
-
         Participation participation = new Participation(activity, volunteer, participationDto);
+
+        participationRepository.save(participation);
 
         return new ParticipationDto(participation, true, true);
     }

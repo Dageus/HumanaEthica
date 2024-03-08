@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.UserDto
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto
 
@@ -23,6 +24,9 @@ class CreateParticipationServiceWebServiceIT extends SpockTest {
   private int port
   private Activity activity
   private ParticipationDto participationDto
+
+  def activityId
+  def userDto
 
   def setup() {
     deleteAll()
@@ -34,39 +38,45 @@ class CreateParticipationServiceWebServiceIT extends SpockTest {
     def institution = institutionService.getDemoInstitution()
     given: "activity info"
     def activityDto = createActivityDto(ACTIVITY_NAME_1,ACTIVITY_REGION_1,3,ACTIVITY_DESCRIPTION_1,
-            IN_ONE_DAY,IN_TWO_DAYS,IN_THREE_DAYS,null)
+            ONE_DAY_AGO,IN_TWO_DAYS,IN_THREE_DAYS,null)
     and: "a theme"
     def themes = new ArrayList<>()
     themes.add(createTheme(THEME_NAME_1, Theme.State.APPROVED,null))
     and: "an activity"
     activity = new Activity(activityDto, institution, themes)
     activity = activityRepository.save(activity)
+    println "activity id: " + activity.id
     and: "user info"
     def volunteer = createVolunteer(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.NORMAL, User.State.ACTIVE)  
-    and: "participation info"
-    participationDto = createParticipationDto(RATING_1, NOW, null, null)
-    and: "an participation"
-    def participation = new Participation(activity, volunteer, participationDto)
-    participation = participationRepository.save(participation)
+    userDto = new UserDto(volunteer)
+    userRepository.save(volunteer)
+    // def otherVolunteer = createVolunteer(USER_2_NAME, USER_2_USERNAME, USER_2_PASSWORD, USER_2_EMAIL, AuthUser.Type.NORMAL, User.State.ACTIVE)  
+    // def otherUserDto = new UserDto(otherVolunteer)
+    // userRepository.save(otherVolunteer)
+    activityId = activity.id
   }
 
-  def "login as volunteer, and create a participation"() {
-    given: 'a volunteer'
-    def loggedUser = demoVolunteerLogin()
+  def "login as member, and create a participation"() {
+    given: 'a member'
+    demoMemberLogin()
+    participationDto = createParticipationDto(RATING_1, NOW, null, userDto)
 
     when:
     def response = webClient.post()
-            .uri('/participations/activities/' + activity.id + '/apply')
+            .uri('participations/' + activityId + '/create')
             .headers(httpHeaders -> httpHeaders.putAll(headers))
             .bodyValue(participationDto)
             .retrieve()
             .bodyToMono(ParticipationDto.class)
             .block()
 
-    then: "check database"
+    then: "check response data"
     response.rating == RATING_1
-    response.volunteer.name == loggedUser.getName()
     response.activity.name == ACTIVITY_NAME_1
+    
+
+    and: "check database"
+    participationRepository.findAll().size() == 1
 
     cleanup:
     deleteAll()
@@ -75,10 +85,11 @@ class CreateParticipationServiceWebServiceIT extends SpockTest {
   def "login as admin, and create a participation"() {
     given: 'admin login'
     demoAdminLogin()
+    participationDto = createParticipationDto(RATING_1, NOW, null, userDto)
 
     when:
     webClient.post()
-            .uri('/participations/activities/' + activity.id + '/apply')
+            .uri('participations/' + activityId + '/create')
             .headers(httpHeaders -> httpHeaders.putAll(headers))
             .bodyValue(participationDto)
             .retrieve()
@@ -93,13 +104,14 @@ class CreateParticipationServiceWebServiceIT extends SpockTest {
     deleteAll()
   }
 
-  def "login as member, and create a participation"() {
-    given: 'member login'
-    demoMemberLogin()
+  def "login as volunteer, and create a participation"() {
+    given: 'volunteer login'
+    demoVolunteerLogin()
+    participationDto = createParticipationDto(RATING_1, NOW, null, userDto)
 
     when:
     webClient.post()
-            .uri('participations/activities/' + activity.id + '/apply')
+            .uri('participations/' + activityId + '/create')
             .headers(httpHeaders -> httpHeaders.putAll(headers))
             .bodyValue(participationDto)
             .retrieve()

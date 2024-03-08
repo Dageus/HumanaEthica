@@ -23,12 +23,13 @@ public class ParticipationController {
         return participationService.getParticipations();
     }
 
-    @GetMapping("/{activityId}")
+    @GetMapping("/{activityId}/participations")
+    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
     public List<ParticipationDto> getParticipationsByActivity(@PathVariable Integer activityId) {
         return participationService.getParticipationsByActivity(activityId);
     }
 
-    @PostMapping("/{activityId}")
+    @PostMapping("/{activityId}/create")
     @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#activityId, 'ACTIVITY.MEMBER')")
     public ParticipationDto createParticipation(@PathVariable Integer activityId, @RequestBody ParticipationDto participationDto) {
         return participationService.createParticipation(activityId, participationDto);
