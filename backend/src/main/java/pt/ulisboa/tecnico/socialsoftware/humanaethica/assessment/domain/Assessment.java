@@ -90,6 +90,9 @@ public class Assessment {
 
     // Verifications
     private void verifyInvariants() {
+        reviewIsRequired();
+        instituionIsRequired();
+        notAssessedInstitution();
     }
 
     // review must have at least 10 characters
@@ -97,6 +100,32 @@ public class Assessment {
         if (this.review == null || this.review.length() < 10) {
             throw new HEException(ASSESSMENT_REVIEW_INVALID);
         }
+    }
+
+    // institution must have at least one activity concluded
+    private void instituionIsRequired() {
+        // TODO check if activity is considered concluded when state is APPROVED and
+        // ending date is before now
+        // Add method in activity side, so it can be used here
+        // TODO: joao, aqui acho que nao tem de estar aproved, so tem de estar concluido
+
+        this.institution.getActivities().stream()
+                .filter(activity -> /*
+                                     * activity.getState() == State.APPROVED
+                                     * &&
+                                     */ activity.getEndingDate().isBefore(LocalDateTime.now()))
+                .findAny()
+                .orElseThrow(
+                        () -> new HEException(ASSESSMENT_INSTITUION_NEEDS_ONE_ACTIVITY, this.institution.getName()));
+    }
+
+    // user must not have already assessed the institution
+    private void notAssessedInstitution() {
+        if (this.institution.getAssessments().stream()
+                .anyMatch(assessment -> assessment != this && assessment.getUser().getId() == this.user.getId())) {
+            throw new HEException(ASSESSMENT_ALREADY_DONE, this.institution.getName());
+        }
+        ;
     }
 
     @Override
