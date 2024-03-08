@@ -72,6 +72,8 @@ public class ParticipationService {
 
         Participation participation = new Participation(activity, volunteer, participationDto);
 
+        participationRepository.save(participation);
+
         return new ParticipationDto(participation, true, true);
     }
 
