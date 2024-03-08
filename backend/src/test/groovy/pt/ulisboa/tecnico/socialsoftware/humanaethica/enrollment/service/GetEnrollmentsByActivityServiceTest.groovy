@@ -14,7 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 
 @DataJpaTest
 class GetEnrollmentsByActivityServiceTest extends SpockTest {
-    private Activity activity
+    def activity
 
     def setup() {
         def institution = institutionService.getDemoInstitution()
