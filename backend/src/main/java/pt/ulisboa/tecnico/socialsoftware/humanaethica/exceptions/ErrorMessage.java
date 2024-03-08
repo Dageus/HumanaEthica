@@ -34,6 +34,8 @@ public enum ErrorMessage {
     ACTIVITY_SHOULD_HAVE_ONE_TO_FIVE_PARTICIPANTS("Activity should have one to five participants"),
     ACTIVITY_DESCRIPTION_INVALID("Activity description is missing"),
     ACTIVITY_INVALID_DATE("Date format for %s is invalid"),
+    ACTIVITY_ID_NULL("Activity id is null"),
+    ACTIVITY_ID_INVALID("Activity id: %d, is not valid"),
     ACTIVITY_APPLICATION_DEADLINE_AFTER_START("Activity application deadline is after start"),
     ACTIVITY_START_AFTER_END("Activity start is after end"),
     ACTIVITY_ALREADY_APPROVED("Activity is already approved with name %s"),
@@ -42,6 +44,8 @@ public enum ErrorMessage {
     ACTIVITY_ALREADY_REPORTED("Activity is already reported with name %s"),
 
     // Participation
+    ACTIVITY_DOES_NOT_EXIST("Activity does not exist"),
+    VOLUNTEER_DOES_NOT_EXIST("Volunteer does not exist"),
     RATING_DOES_NOT_EXIST("Rating does not exist"),
     ACCEPTANCE_DATE_DOES_NOT_EXIST("Acceptance date does not exist"),
     ACCEPTANCE_DATE_CANNOT_BE_IN_THE_FUTURE("Acceptance date cannot be in the future"),
