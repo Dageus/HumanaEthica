@@ -18,11 +18,6 @@ public class EnrollmentController {
     @Autowired
     private EnrollmentService enrollmentService;
 
-    @GetMapping()
-    public List<EnrollmentDto> getEnrollments() {
-        return enrollmentService.getEnrollments();
-    }
-
     @PostMapping("/activities/{activityId}/apply")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public EnrollmentDto createEnrollment(

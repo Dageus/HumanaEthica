@@ -14,6 +14,8 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 
 @DataJpaTest
 class CreateEnrollmentServiceTest extends SpockTest {
+  def activity
+  def volunteer
   def setup() {
     def institution = institutionService.getDemoInstitution()
     given: "activity info"
@@ -23,16 +25,16 @@ class CreateEnrollmentServiceTest extends SpockTest {
     def themes = new ArrayList<>()
     themes.add(createTheme(THEME_NAME_1, Theme.State.APPROVED,null))
     and: "an activity"
-    def activity = new Activity(activityDto, institution, themes)
+    activity = new Activity(activityDto, institution, themes)
     activityRepository.save(activity)
     and: "user info"
-    def volunteer = createVolunteer(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.NORMAL, User.State.ACTIVE)  
+    volunteer = createVolunteer(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.NORMAL, User.State.ACTIVE)  
     and: "enrollment info"
   }
 
   def 'create enrollment'() {
     when:
-    def result = enrollmentService.createEnrollment(1, 1, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
+    def result = enrollmentService.createEnrollment(volunteer.id, activity.id, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
 
     then:
     result.volunteer.name == USER_1_NAME
@@ -40,22 +42,40 @@ class CreateEnrollmentServiceTest extends SpockTest {
     result.motivation == ENROLLMENT_MOTIVATION_1
   }
 
-  def 'create enrollment with invalid activityId throws exception'() {
+  def 'create enrollment with invalid volunteerId throws exception'() {
     when:
-    enrollmentService.createEnrollment(-1, 2, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
+    enrollmentService.createEnrollment(-1, activity.id, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
     
     then:
     def exception = thrown(HEException)
     exception.getErrorMessage() == USER_NOT_FOUND
   }
 
-  def 'create enrollment with invalid volunteerId throws exception'() {
+    def 'create enrollment with null volunteerId throws exception'() {
     when:
-    enrollmentService.createEnrollment(1, -1, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
+    enrollmentService.createEnrollment(null, activity.id, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
+    
+    then:
+    def exception = thrown(HEException)
+    exception.getErrorMessage() == USER_NOT_FOUND
+  }
+
+  def 'create enrollment with invalid activityId throws exception'() {
+    when:
+    enrollmentService.createEnrollment(volunteer.id, -1, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
     
     then:
     def exception = thrown(HEException)
     exception.getErrorMessage() == ACTIVITY_ID_INVALID
+  }
+
+  def 'create enrollment with null activityId throws exception'() {
+    when:
+    enrollmentService.createEnrollment(volunteer.id, null, createEnrollmentDto(ENROLLMENT_MOTIVATION_1, NOW, null, null))
+    
+    then:
+    def exception = thrown(HEException)
+    exception.getErrorMessage() == ACTIVITY_ID_NULL
   }
 
   @TestConfiguration

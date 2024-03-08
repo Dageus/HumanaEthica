@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,20 +29,12 @@ public class EnrollmentService {
     UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<EnrollmentDto> getEnrollments() {
-        return enrollmentRepository.findAll().stream()
-                .map(enrollment -> new EnrollmentDto(enrollment, true, true))
-                .sorted(Comparator.comparing(EnrollmentDto::getId))
-                .toList();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public EnrollmentDto createEnrollment(Integer userId, Integer activityId, EnrollmentDto enrollmentDto) {
         if (activityId == null)
-        throw new HEException(ACTIVITY_ID_NULL);
+            throw new HEException(ACTIVITY_ID_NULL);
         if (activityId <= 0)
             throw new HEException(ACTIVITY_ID_INVALID, activityId);
-        
+
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
 
