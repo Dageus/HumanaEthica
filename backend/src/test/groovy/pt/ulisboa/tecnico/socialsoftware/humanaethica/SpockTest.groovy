@@ -50,6 +50,7 @@ class SpockTest extends Specification {
 
     // dates
 
+    public static final LocalDateTime THREE_DAYS_AGO = DateHandler.now().minusDays(3)
     public static final LocalDateTime TWO_DAYS_AGO = DateHandler.now().minusDays(2)
     public static final LocalDateTime ONE_DAY_AGO = DateHandler.now().minusDays(1)
     public static final LocalDateTime NOW = DateHandler.now()
@@ -251,6 +252,7 @@ class SpockTest extends Specification {
     // clean database
 
     def deleteAll() {
+        participationRepository.deleteAll()
         activityRepository.deleteAllActivityTheme()
         activityRepository.deleteAll()
         authUserRepository.deleteAll()
