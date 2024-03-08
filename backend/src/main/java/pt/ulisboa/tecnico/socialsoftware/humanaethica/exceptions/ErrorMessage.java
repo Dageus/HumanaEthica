@@ -13,7 +13,11 @@ public enum ErrorMessage {
     INVALID_STATE("The State %s is invalid"),
     AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
     USER_NOT_FOUND("User not found with username %s"),
+    USERID_NOT_FOUND("User not found with id %d"),
+    USERID_NOT_VALID("User id %d is not valid"),
     INSTITUTION_NOT_FOUND("Institution not found with id %d"),
+    INSTITUTIONID_NOT_FOUND("Institution not found with id %d"),
+    INSTITUTIONID_NOT_VALID("Institution id %d is not valid"),
     USER_NOT_APPROVED("The member of this institution is not yet approved"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
@@ -39,7 +43,14 @@ public enum ErrorMessage {
     ACTIVITY_ALREADY_APPROVED("Activity is already approved with name %s"),
     ACTIVITY_ALREADY_EXISTS("Activity already exists in database"),
     ACTIVITY_ALREADY_SUSPENDED("Activity is already suspended with name %s"),
-    ACTIVITY_ALREADY_REPORTED("Activity is already reported with name %s");
+    ACTIVITY_ALREADY_REPORTED("Activity is already reported with name %s"),
+
+    // Assessment
+    ASSESSMENT_NOT_FOUND("Institution %s has no assessments"),
+    ASSESSMENT_REVIEW_INVALID("Assessment review must have at least 10 characters"),
+    ASSESSMENT_ALREADY_MADE_BY_USER("Assessment already made by user with id %d"),
+    ASSESSMENT_INSTITUION_NEEDS_ONE_ACTIVITY("Institution %s needs at least one activity concluded"),
+    ASSESSMENT_ALREADY_DONE("Assessment already done for institution %s");
 
     public final String label;
 
