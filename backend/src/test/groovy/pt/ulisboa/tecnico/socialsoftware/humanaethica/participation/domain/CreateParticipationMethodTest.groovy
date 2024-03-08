@@ -24,6 +24,7 @@ import java.time.LocalDateTime
 class CreateParticipationMethodTest extends SpockTest {
     Activity activity = Mock()
     Volunteer volunteer = Mock()
+    Volunteer otherVolunteer = Mock()
     Participation otherParticipation = Mock()
 
     def participationDto 
@@ -50,7 +51,7 @@ class CreateParticipationMethodTest extends SpockTest {
         participation.getActivity() == activity
         participation.getVolunteer() == volunteer
         participation.getRating() == 5
-        participation.getAcceptanceDate() == DateHandler.toISOString(NOW)
+        participation.getAcceptanceDate() == NOW
         
         // and: "invocations"
         // 1 * activity.addParticipation(_)
@@ -61,13 +62,14 @@ class CreateParticipationMethodTest extends SpockTest {
     def "create participation and violate invariants number of participants is more than limit of activity"() {
         given:
         activity.getParticipantsNumberLimit() >> 1
+        activity.getApplicationDeadline() >> ONE_DAY_AGO
         otherParticipation.getVolunteer() >> volunteer
         otherParticipation.getActivity() >> activity
         activity.getParticipations() >> [otherParticipation]
         volunteer.getParticipations() >> [otherParticipation]
 
         when:
-        new Participation(activity, volunteer, participationDto)
+        new Participation(activity, otherVolunteer, participationDto)
 
         then:
         def exception = thrown(HEException)

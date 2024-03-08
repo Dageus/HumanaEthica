@@ -140,13 +140,13 @@ public class Participation {
     }
 
     private void participantsMoreThanLimit() {
-        if (activity.getParticipations().size() > activity.getParticipantsNumberLimit()) {
+        if (activity.getParticipations().size() >= activity.getParticipantsNumberLimit()) {
             throw new HEException(ACTIVITY_PARTICIPANTS_EXCEED_LIMIT);
         }
     }
 
     private void volunteerAlreadyParticipated() {
-        if (activity.getParticipations().stream().anyMatch(participation -> participation.getVolunteer().getId().equals(volunteer.getId()))) {
+        if (activity.getParticipations().stream().anyMatch(participation -> participation.getVolunteer().equals(volunteer) && participation != this)) {
             throw new HEException(VOLUNTEER_ALREADY_PARTICIPATED);
         }
     }
