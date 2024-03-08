@@ -29,6 +29,8 @@ public enum ErrorMessage {
 
     // Activity
     ACTIVITY_NOT_FOUND("Activity not found with id %d"),
+    ACTIVITY_ID_NULL("Activity id is null"),
+    ACTIVITY_ID_INVALID("Activity id: %d, is not valid"),
     ACTIVITY_NAME_INVALID("Activity Name: %s, is not valid"),
     ACTIVITY_REGION_NAME_INVALID("Region Name: %s, is not valid"),
     ACTIVITY_SHOULD_HAVE_ONE_TO_FIVE_PARTICIPANTS("Activity should have one to five participants"),

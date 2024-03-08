@@ -39,11 +39,22 @@ public class ParticipationService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ParticipationDto> getParticipationsByActivity(Integer activityId) {
-        return participationRepository.findAll().stream()
-                .filter(participation -> participation.getActivity().getId().equals(activityId))
-                .map(participation -> new ParticipationDto(participation, true, true))
-                .sorted(Comparator.comparing(ParticipationDto::getAcceptanceDate))
-                .toList();
+        if (activityId == null)
+            throw new HEException(ACTIVITY_ID_NULL);
+        if (activityId <= 0)
+            throw new HEException(ACTIVITY_ID_INVALID, activityId);
+
+        activityRepository.findById(activityId)
+            .orElseThrow(() -> new HEException(ACTIVITY_NOT_FOUND, activityId));
+
+        List<Participation> participations = participationRepository.getParticipationsByActivity(activityId);
+
+        List<ParticipationDto> participationDtos = participations.stream()
+            .map(participation -> new ParticipationDto(participation, true, true))
+            .sorted(Comparator.comparing(ParticipationDto::getAcceptanceDate))
+            .toList();
+
+        return participationDtos;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

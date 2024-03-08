@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.dto.AuthDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.ParticipationService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.repository.ParticipationRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.demo.DemoService
@@ -228,6 +230,12 @@ class SpockTest extends Specification {
 
     public static final Integer RATING_1 = 4
     public static final Integer RATING_2 = 5
+
+    @Autowired
+    ParticipationService participationService
+
+    @Autowired
+    ParticipationRepository participationRepository
 
     protected createParticipationDto(rating, acceptanceDate, activityDto, userDto) {
         def participationDto = new ParticipationDto()

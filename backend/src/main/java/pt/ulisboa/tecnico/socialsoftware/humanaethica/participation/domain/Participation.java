@@ -27,13 +27,14 @@ public class Participation {
     // Instance variables
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     @ManyToOne
     private Activity activity;
 
     @ManyToOne
+    @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
     
     private Integer rating;
