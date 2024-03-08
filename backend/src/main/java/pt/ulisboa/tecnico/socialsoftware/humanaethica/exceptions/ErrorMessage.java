@@ -44,6 +44,7 @@ public enum ErrorMessage {
     ACTIVITY_ALREADY_REPORTED("Activity is already reported with name %s"),
 
     // Enrollment
+    INVALID_ENROLLMENT("Enrollment is invalid"),
     MOTIVATION_TOO_SHORT("Motivation is too short: %s"),
     VOLUNTEER_ALREADY_ENROLLED("Volunteer already applied to this activity"),
     APPLICATION_PERIOD_CLOSED("Application period closed: %s");

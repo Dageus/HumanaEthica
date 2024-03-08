@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.webservice
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.webservice
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
