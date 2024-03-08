@@ -40,6 +40,20 @@ class CreateEnrollmentMethodTest extends SpockTest {
         enrollmentDto.setEnrollmentDateTime(DateHandler.toISOString(NOW))
     }
 
+    def "create enrollment successfully"() {
+        given:
+        activity.getApplicationDeadline() >> IN_TWO_DAYS
+        activity.getEnrollments() >> []
+        enrollmentDto.setEnrollmentDateTime(DateHandler.toISOString(NOW))
+
+        when:
+        def enrollment = new Enrollment(activity, volunteer, enrollmentDto)
+
+        then:
+        enrollment.getMotivation() == "This is a valid motivation with more than 10 characters"
+        enrollment.getEnrollmentDateTime() == NOW
+    }
+
     def "create enrollment with invalid motivation"() {
         given:
         enrollmentDto.setMotivation("Too short")
