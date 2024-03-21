@@ -40,6 +40,19 @@
             </template>
             <span>Report Activity</span>
           </v-tooltip>
+          <v-tooltip v-if="activityAppliable(item)" bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                class="mr-2 action-button"
+                color="blue"
+                v-on="on"
+                data-cy="applyButton"
+                @click="applyActivity(item)"
+                >fa-solid fa-arrow-right</v-icon
+              >
+            </template>
+            <span>Apply to Activiy</span>
+          </v-tooltip>
         </template>
       </v-data-table>
     </v-card>
@@ -50,6 +63,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
+import Enrollment from '@/models/enrollment/Enrollment';
 import { show } from 'cli-cursor';
 
 @Component({
@@ -57,6 +71,8 @@ import { show } from 'cli-cursor';
 })
 export default class VolunteerActivitiesView extends Vue {
   activities: Activity[] = [];
+  enrollments: Enrollment[] = [];
+
   search: string = '';
   headers: object = [
     {
@@ -126,6 +142,7 @@ export default class VolunteerActivitiesView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.activities = await RemoteServices.getActivities();
+      this.enrollments = await RemoteServices.getVolunteerEnrollments();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -145,6 +162,23 @@ export default class VolunteerActivitiesView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  async applyActivity(activity: Activity) {
+    // TODO
+  }
+
+  activityAppliable(activity: Activity) {
+    if (activity.id === null) {
+      return false;
+    }
+    let applicationDeadline = new Date(activity.applicationDeadline);
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let commonEnrollments = this.enrollments.some(
+      (enrollment) => enrollment.activityId === activity.id,
+    );
+    return applicationDeadline >= today && !commonEnrollments;
   }
 }
 </script>
