@@ -54,6 +54,19 @@
             </template>
             <span>Write Assessment</span>
           </v-tooltip>
+          <v-tooltip v-if="activityAppliable(item)" bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                class="mr-2 action-button"
+                color="blue"
+                v-on="on"
+                data-cy="applyButton"
+                @click="applyActivity(item)"
+                >fa-solid fa-arrow-right</v-icon
+              >
+            </template>
+            <span>Apply to Activiy</span>
+          </v-tooltip>
         </template>
       </v-data-table>
       <assessment-dialog
@@ -72,6 +85,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import AssessmentDialog from '@/views/volunteer/AssessmentDialog.vue';
+import Enrollment from '@/models/enrollment/Enrollment';
 import { show } from 'cli-cursor';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
@@ -86,6 +100,8 @@ export default class VolunteerActivitiesView extends Vue {
   activities: Activity[] = [];
   participations: Participation[] = [];
   assessments: Assessment[] = [];
+  enrollments: Enrollment[] = [];
+
   search: string = '';
 
   currentActivity: Activity | null = null;
@@ -161,6 +177,7 @@ export default class VolunteerActivitiesView extends Vue {
       this.activities = await RemoteServices.getActivities();
       this.participations = await RemoteServices.getVolunteerParticipation();
       this.assessments = await RemoteServices.getVolunteerAssessments();
+      this.enrollments = await RemoteServices.getVolunteerEnrollments();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -214,6 +231,23 @@ export default class VolunteerActivitiesView extends Vue {
   onCloseAssessmentDialog() {
     this.currentActivity = null;
     this.assessmentDialog = false;
+  }
+
+  async applyActivity(activity: Activity) {
+    // TODO
+  }
+
+  activityAppliable(activity: Activity) {
+    if (activity.id === null) {
+      return false;
+    }
+    let applicationDeadline = new Date(activity.applicationDeadline);
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let commonEnrollments = this.enrollments.some(
+      (enrollment) => enrollment.activityId === activity.id,
+    );
+    return applicationDeadline >= today && !commonEnrollments;
   }
 }
 </script>
