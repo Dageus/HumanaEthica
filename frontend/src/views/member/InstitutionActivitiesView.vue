@@ -28,6 +28,9 @@
           {{ theme.completeName }}
         </v-chip>
       </template>
+      <template v-slot:[`item.enrollments`]="{ item }">
+        {{ item.numberOfEnrollments }} 
+      </template>
       <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -138,6 +141,12 @@ export default class InstitutionActivitiesView extends Vue {
     {
       text: 'Application Deadline',
       value: 'formattedApplicationDeadline',
+      align: 'left',
+      width: '5%',
+    },
+    {
+      text: 'Applications',
+      value: 'numberOfEnrollments',
       align: 'left',
       width: '5%',
     },
