@@ -47,7 +47,7 @@
                 color="blue"
                 v-on="on"
                 data-cy="applyButton"
-                @click="applyActivity(item)"
+                @click="newEnrollment(item)"
                 >fa-solid fa-arrow-right</v-icon
               >
             </template>
@@ -55,6 +55,14 @@
           </v-tooltip>
         </template>
       </v-data-table>
+      <enrollment-dialog
+        v-if="currentEnrollment && currentActivity && enrollmentDialog"
+        v-model="enrollmentDialog"
+        :activity="currentActivity"
+        :enrollment="currentEnrollment"
+        v-on:apply="applyActivity"
+        v-on:close-enrollment-dialog="onCloseEnrollmentDialog"
+      />
     </v-card>
   </div>
 </template>
@@ -67,11 +75,18 @@ import Enrollment from '@/models/enrollment/Enrollment';
 import { show } from 'cli-cursor';
 
 @Component({
+  components: {
+    // 'enrollment-dialog': EnrollmentDialog,
+  },
   methods: { show },
 })
 export default class VolunteerActivitiesView extends Vue {
   activities: Activity[] = [];
   enrollments: Enrollment[] = [];
+
+  currentEnrollment: Enrollment | null = null;
+  currentActivity: Activity | null = null;
+  enrollmentDialog: boolean = false;
 
   search: string = '';
   headers: object = [
@@ -164,8 +179,30 @@ export default class VolunteerActivitiesView extends Vue {
     }
   }
 
-  async applyActivity(activity: Activity) {
-    // TODO
+  newEnrollment(activity: Activity) {
+    this.currentEnrollment = new Enrollment();
+    this.currentActivity = activity;
+    this.enrollmentDialog = true;
+  }
+
+  onCloseEnrollmentDialog() {
+    this.currentEnrollment = null;
+    this.currentActivity = null;
+    this.enrollmentDialog = false;
+  }
+
+  async applyActivity(activity: Activity, enrollment: Enrollment) {
+    if (activity.id !== null) {
+      try {
+        const result = await RemoteServices.createEnrollment(
+          activity.id,
+          enrollment,
+        );
+        this.enrollments.push(result);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
   }
 
   activityAppliable(activity: Activity) {
