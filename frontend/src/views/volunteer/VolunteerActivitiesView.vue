@@ -56,11 +56,10 @@
         </template>
       </v-data-table>
       <enrollment-dialog
-        v-if="currentEnrollment && currentActivity && enrollmentDialog"
+        v-if="currentActivity && enrollmentDialog"
         v-model="enrollmentDialog"
         :activity="currentActivity"
-        :enrollment="currentEnrollment"
-        v-on:apply="applyActivity"
+        v-on:apply="onApplyActivity"
         v-on:close-enrollment-dialog="onCloseEnrollmentDialog"
       />
     </v-card>
@@ -77,7 +76,7 @@ import { show } from 'cli-cursor';
 
 @Component({
   components: {
-   'enrollment-dialog': EnrollmentDialog,
+    'enrollment-dialog': EnrollmentDialog,
   },
   methods: { show },
 })
@@ -85,7 +84,6 @@ export default class VolunteerActivitiesView extends Vue {
   activities: Activity[] = [];
   enrollments: Enrollment[] = [];
 
-  currentEnrollment: Enrollment | null = null;
   currentActivity: Activity | null = null;
   enrollmentDialog: boolean = false;
 
@@ -181,30 +179,19 @@ export default class VolunteerActivitiesView extends Vue {
   }
 
   newEnrollment(activity: Activity) {
-    this.currentEnrollment = new Enrollment();
     this.currentActivity = activity;
     this.enrollmentDialog = true;
-    console.log(this.currentActivity && this.currentEnrollment && this.enrollmentDialog);
   }
 
   onCloseEnrollmentDialog() {
-    this.currentEnrollment = null;
     this.currentActivity = null;
     this.enrollmentDialog = false;
   }
 
-  async applyActivity(activity: Activity, enrollment: Enrollment) {
-    if (activity.id !== null) {
-      try {
-        const result = await RemoteServices.createEnrollment(
-          activity.id,
-          enrollment,
-        );
-        this.enrollments.push(result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
+  async onApplyActivity(enrollment: Enrollment) {
+    this.enrollments.push(enrollment);
+    this.currentActivity = null;
+    this.enrollmentDialog = false;
   }
 
   activityAppliable(activity: Activity) {
