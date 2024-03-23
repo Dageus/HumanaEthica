@@ -1,6 +1,8 @@
 <template>
   <v-dialog v-model="dialog" persistent width="1300">
     <v-card>
+  <v-dialog v-model="dialog" persistent width="1300">
+    <v-card>
       <v-card-title>
         <span class="headline">Enrollment</span>
       </v-card-title>
@@ -9,11 +11,7 @@
           <v-text-field
             v-model="motivation"
             label="*Motivation"
-            :rules="[
-              (v) =>
-                isMotivationValid(v) ||
-                'Motivation must be at least 10 characters.',
-            ]"
+            :rules="[isMotivationValid]"
             required
             data-cy="motivation"
           ></v-text-field>
@@ -29,7 +27,7 @@
           Close
         </v-btn>
         <v-btn
-          v-if="isMotivationValid(this.motivation)"
+          v-if="isMotivationValidBoolean"
           color="blue-darken-1"
           variant="text"
           @click="createEnrollment"
@@ -47,18 +45,26 @@ import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Enrollment from '@/models/enrollment/Enrollment';
 import Activity from '@/models/activity/Activity';
 import RemoteServices from '@/services/RemoteServices';
+import Activity from '@/models/activity/Activity';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class EnrollmentDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
+  @Prop({ type: Activity, required: true }) readonly activity!: Activity;
   @Prop({ type: Activity, required: true }) readonly activity!: Activity;
 
   motivation: string = '';
 
   cypressCondition: boolean = false;
 
+
   isMotivationValid(value: string) {
-    return value.length >= 10;
+    return value.length >= 10 || 'Motivation must be at least 10 characters.';
+  }
+
+  get isMotivationValidBoolean() {
+    return typeof this.isMotivationValid(this.motivation) === 'boolean';
   }
 
   async createEnrollment() {
@@ -80,3 +86,4 @@ export default class EnrollmentDialog extends Vue {
   }
 }
 </script>
+
