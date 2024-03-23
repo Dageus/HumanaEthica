@@ -94,6 +94,7 @@ import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import AssessmentDialog from '@/views/volunteer/AssessmentDialog.vue';
 import Enrollment from '@/models/enrollment/Enrollment';
+import EnrollmentDialog from '@/views/volunteer/EnrollmentDialog.vue';
 import { show } from 'cli-cursor';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
@@ -101,6 +102,7 @@ import Assessment from '@/models/assessment/Assessment';
 @Component({
   components: {
     'assessment-dialog': AssessmentDialog,
+    'enrollment-dialog': EnrollmentDialog,
   },
   methods: { show },
 })
@@ -248,6 +250,7 @@ export default class VolunteerActivitiesView extends Vue {
     this.currentEnrollment = new Enrollment();
     this.currentActivity = activity;
     this.enrollmentDialog = true;
+    console.log(this.currentActivity && this.currentEnrollment && this.enrollmentDialog);
   }
 
   onCloseEnrollmentDialog() {
