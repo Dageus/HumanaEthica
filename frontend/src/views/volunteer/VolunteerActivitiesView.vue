@@ -72,11 +72,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import Enrollment from '@/models/enrollment/Enrollment';
+import EnrollmentDialog from '@/views/volunteer/EnrollmentDialog.vue';
 import { show } from 'cli-cursor';
 
 @Component({
   components: {
-    // 'enrollment-dialog': EnrollmentDialog,
+   'enrollment-dialog': EnrollmentDialog,
   },
   methods: { show },
 })
@@ -183,6 +184,7 @@ export default class VolunteerActivitiesView extends Vue {
     this.currentEnrollment = new Enrollment();
     this.currentActivity = activity;
     this.enrollmentDialog = true;
+    console.log(this.currentActivity && this.currentEnrollment && this.enrollmentDialog);
   }
 
   onCloseEnrollmentDialog() {
