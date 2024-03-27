@@ -22,6 +22,10 @@ dayBeforeYesterday.setDate(now.getDate() - 2);
 
 Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
+    query: "DELETE FROM ENROLLMENT",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
     query: "DELETE FROM ACTIVITY",
     credentials: credentials,
   })
@@ -38,6 +42,22 @@ Cypress.Commands.add('deleteAllButArs', () => {
     credentials: credentials,
   });
 });
+
+Cypress.Commands.add('populateDatabaseFromDumpEnrollment', () => {
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.activity (id, application_deadline, creation_date, description, ending_date, name, participants_number_limit, region, starting_date, state, institution_id) VALUES\
+    (1, '2024-08-06 17:58:21.402146', '2024-08-06 17:58:21.402146', 'Enrollment is open', '2024-08-08 17:58:21.402146', 'A1', 1, 'Lisbon', '2024-08-07 17:58:21.402146', 'APPROVED', 1),\
+    (2, '2024-08-06 17:58:21.402146', '2024-08-06 17:58:21.402146', 'Enrollment is open and it is already enrolled', '2024-08-08 17:58:21.402146', 'A2', 2, 'Lisbon', '2024-08-07 17:58:21.402146', 'APPROVED', 1),\
+    (3, '2024-02-06 17:58:21.402146', '2024-08-06 17:58:21.402146', 'Enrollment is closed', '2024-08-08 17:58:21.402146', 'A3', 3, 'Lisbon', '2024-08-07 17:58:21.402146', 'APPROVED', 1)",
+    credentials: credentials,
+    });
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.enrollment (id, enrollment_date_time, motivation, activity_id, volunteer_id) VALUES\
+    (5, '2024-02-06 18:51:37.595713', 'sql-inserted-motivation', 2, 3)",
+    credentials: credentials,
+    });
+});
+
 
 Cypress.Commands.add('createDemoEntities', () => {
   cy.task('queryDatabase',  {
