@@ -28,6 +28,24 @@
           >
         </v-card-title>
       </template>
+      <template v-slot:[`item.action`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="
+                !item.participating &&
+                activity.numberOfParticipants < activity.participantsNumberLimit
+              "
+              class="mr-2 action-button"
+              @click="createParticipation(item)"
+              v-on="on"
+              data-cy="createParticipation"
+              >fa-solid fa-check
+            </v-icon>
+          </template>
+          <span>Select Participant</span>
+        </v-tooltip>
+      </template>
     </v-data-table>
   </v-card>
 </template>
@@ -38,7 +56,9 @@ import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import Enrollment from '@/models/enrollment/Enrollment';
 
-@Component({})
+import Participation from '@/models/participation/Participation';
+
+@Component()
 export default class InstitutionActivityEnrollmentsView extends Vue {
   activity!: Activity;
   enrollments: Enrollment[] = [];
