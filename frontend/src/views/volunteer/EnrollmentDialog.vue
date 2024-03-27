@@ -45,13 +45,10 @@ import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Enrollment from '@/models/enrollment/Enrollment';
 import Activity from '@/models/activity/Activity';
 import RemoteServices from '@/services/RemoteServices';
-import Activity from '@/models/activity/Activity';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class EnrollmentDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Activity, required: true }) readonly activity!: Activity;
   @Prop({ type: Activity, required: true }) readonly activity!: Activity;
 
   motivation: string = '';
