@@ -47,6 +47,13 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <participation-select-dialog
+      v-if="currentEnrollment && selectParticipantDialog"
+      v-model="selectParticipantDialog"
+      :enrollment="currentEnrollment"
+      v-on:save-participation="onSaveParticipation"
+      v-on:close-participation-dialog="onCloseParticipationDialog"
+    />
   </v-card>
 </template>
 
@@ -55,14 +62,21 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import Enrollment from '@/models/enrollment/Enrollment';
-
+import ParticipationSelectionDialog from '@/views/member/ParticipationSelectionDialog.vue';
 import Participation from '@/models/participation/Participation';
 
-@Component()
+@Component({
+  components: {
+    'participation-select-dialog': ParticipationSelectionDialog,
+  },
+})
 export default class InstitutionActivityEnrollmentsView extends Vue {
   activity!: Activity;
   enrollments: Enrollment[] = [];
   search: string = '';
+
+  currentEnrollment: Enrollment | null = null;
+  selectParticipantDialog: boolean = false;
 
   headers: object = [
     {
@@ -115,6 +129,22 @@ export default class InstitutionActivityEnrollmentsView extends Vue {
   async getActivities() {
     await this.$store.dispatch('setActivity', null);
     this.$router.push({ name: 'institution-activities' }).catch(() => {});
+  }
+
+  createParticipation(enrollment: Enrollment) {
+    this.currentEnrollment = enrollment;
+    this.selectParticipantDialog = true;
+  }
+
+  async onSaveParticipation(participation: Participation) {
+    this.currentEnrollment!.participating = true;
+    this.selectParticipantDialog = false;
+    // TODO add participation to somewhere???
+  }
+
+  onCloseParticipationDialog() {
+    this.currentEnrollment = null;
+    this.selectParticipantDialog = false;
   }
 }
 </script>

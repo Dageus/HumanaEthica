@@ -551,6 +551,23 @@ export default class RemoteServices {
       });
   }
 
+  // Participation Controller
+
+  static async selectParticipant(
+    activityId: number,
+    participation: Participation,
+  ) {
+    console.log(participation.volunteerId);
+    return httpClient
+      .post(`/activities/${activityId}/participations`, participation)
+      .then((response) => {
+        return new Participation(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createAssessment(
     assessment: Assessment,
     activity: Activity,
