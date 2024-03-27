@@ -22,9 +22,17 @@ dayBeforeYesterday.setDate(now.getDate() - 2);
 
 Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
-    query: "DELETE FROM ACTIVITY",
+    query: "DELETE FROM ENROLLMENT",
+    credentials: credentials,
+  });
+  cy.task('queryDatabase', {
+    query: "DELETE FROM PARTICIPATION",
     credentials: credentials,
   })
+  cy.task('queryDatabase', {
+    query: "DELETE FROM ACTIVITY",
+    credentials: credentials,
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM AUTH_USERS WHERE NOT (username = 'ars')",
     credentials: credentials,
@@ -60,6 +68,59 @@ Cypress.Commands.add('createDemoEntities', () => {
     query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(3, "DEMO", "demo-volunteer", 3),
     credentials: credentials,
   })
+});
+
+Cypress.Commands.add('populateParticipationDatabase', () => {
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.institutions (id, active, confirmation_token, creation_date, email, name, nif, token_generation_date) \
+    VALUES \
+      (1, true, 'abca428c09862e89', '2024-02-06 17:58:21.402146', 'demo_institution@mail.com', 'DEMO INSTITUTION', '000000000', '2024-02-06 17:58:21.402134')",
+    credentials: credentials
+  });
+  
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.users (user_type, id, creation_date, name, role, state, institution_id) \
+    VALUES \
+      ('MEMBER', 2, '2024-02-06 17:58:21.419878', 'DEMO-MEMBER', 'MEMBER', 'ACTIVE', 1), \
+      ('VOLUNTEER', 3, '2024-02-06 17:58:23.732513', 'DEMO-VOLUNTEER', 'VOLUNTEER', 'ACTIVE', NULL), \
+      ('VOLUNTEER', 4, '2024-02-06 17:58:23.732513', 'DEMO-VOLUNTEER2', 'VOLUNTEER', 'ACTIVE', NULL), \
+      ('VOLUNTEER', 5, '2024-02-06 17:58:23.732513', 'DEMO-VOLUNTEER3', 'VOLUNTEER', 'ACTIVE', NULL)",
+    credentials: credentials
+  });
+  
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.auth_users (auth_type, id, active, email, last_access, password, username, confirmation_token, token_generation_date, user_id) \
+    VALUES \
+      ('DEMO', 2, true, 'demo_member@mail.com', NULL, NULL, 'demo-member', NULL, NULL, 2), \
+      ('DEMO', 3, true, 'demo_volunteer@mail.com', NULL, NULL, 'demo-volunteer', NULL, NULL, 3), \
+      ('DEMO', 4, true, 'demo_volunteer@mail.com', NULL, NULL, 'demo-volunteer-2', NULL, NULL, 4), \
+      ('DEMO', 5, true, 'demo_volunteer@mail.com', NULL, NULL, 'demo-volunteer-3', NULL, NULL, 5)",
+    credentials: credentials
+  });
+  
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.activity (id, application_deadline, creation_date, description, ending_date, name, participants_number_limit, region, starting_date, state, institution_id) \
+    VALUES \
+      (1, '2024-02-06 17:58:21.402146', '2024-01-06 17:58:21.402146', 'Has vacancies', '2024-02-08 17:58:21.402146', 'A1', 2, 'Lisbon', '2024-02-07 17:58:21.402146', 'APPROVED', 1), \
+      (2, '2024-02-06 17:58:21.402146', '2024-01-06 17:58:21.402146', 'Has no vacancies', '2024-02-08 17:58:21.402146', 'A2', 1, 'Lisbon', '2024-02-07 17:58:21.402146', 'APPROVED', 1)",
+    credentials: credentials
+  });
+  
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.enrollment (id, enrollment_date_time, motivation, activity_id, volunteer_id) \
+    VALUES \
+      (1, '2024-02-06 18:51:37.595713', 'Has vacancies and do not participate', 1, 3), (2, '2024-02-06 19:51:37.595713', 'Has vacancies and participate', 1, 4), \
+      (3, '2024-02-06 18:51:37.595713', 'Has no vacancies and participate', 2, 3), (4, '2024-02-06 20:51:37.595713', 'Has no vacancies and do not participate', 2, 5)",
+    credentials: credentials
+  });
+  
+  cy.task('queryDatabase', {
+    query: "INSERT INTO public.participation (id, acceptance_date, rating, activity_id, volunteer_id) \
+    VALUES \
+      (5, '2024-02-06 18:51:37.595713', 5, 1, 4), (6, '2024-02-06 18:51:37.595713', 5, 2, 3)",
+    credentials: credentials
+  });
+  
 });
 
 function generateAuthUserTuple(id, authType, username, userId) {
