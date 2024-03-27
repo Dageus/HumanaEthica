@@ -49,5 +49,28 @@ describe('Assessment', () => {
     cy.get('[data-cy="createAssessment"]').click(); //save assessment
     cy.wait('@postAssessment'); //wait for the request to be done
     cy.logout();
+
+    cy.demoMemberLogin()
+    // intercept get institution
+    cy.intercept('GET', '/users/*/getInstitution').as('getInstitution')
+    // intercept get assessments
+    cy.intercept('GET', '/institutions/*/assessments').as('getAssessment')
+
+    cy.get('[data-cy="institution"]').click();
+    cy.get('[data-cy="assessments"]').click();
+
+    // wait for the requests to be done
+    cy.wait('@getInstitution')
+    cy.wait('@getAssessment')
+
+    // verify table content
+    cy.get('[data-cy="institutionAssessmentsTable"] tbody tr')
+      .should('have.length', 1)
+      .eq(0)
+      .children(0)
+      .eq(0)
+      .should("contain", REVIEW);
+
+    cy.logout();
   });
 });
