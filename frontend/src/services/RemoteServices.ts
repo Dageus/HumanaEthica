@@ -13,6 +13,7 @@ import AuthPasswordDto from '@/models/user/AuthPasswordDto';
 import Theme from '@/models/theme/Theme';
 import Enrollment from '@/models/enrollment/Enrollment';
 import Assessment from '@/models/assessment/Assessment';
+import Participation from '@/models/participation/Participation';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -286,6 +287,32 @@ export default class RemoteServices {
       });
   }
 
+  static async getVolunteerParticipation(): Promise<Participation[]> {
+    return httpClient
+      .get('/user/participations')
+      .then((response) => {
+        return response.data.map((participation: any) => {
+          return new Participation(participation);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getVolunteerAssessments(): Promise<Assessment[]> {
+    return httpClient
+      .get('/user/assessments')
+      .then((response) => {
+        return response.data.map((assessment: any) => {
+          return new Assessment(assessment);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   // Institution Controller
 
   static async registerInstitution(
@@ -494,6 +521,20 @@ export default class RemoteServices {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createAssessment(
+    assessment: Assessment,
+    activity: Activity,
+  ): Promise<Assessment> {
+    return httpClient
+      .post(`/institutions/${activity.institution.id}/assessments`, assessment)
+      .then((response) => {
+        return new Assessment(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
