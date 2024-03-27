@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.AssessmentRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthNormalUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
@@ -20,6 +22,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.ParticipationRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Admin;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
@@ -55,6 +59,12 @@ public class UserService {
     private UserDocumentRepository userDocumentRepository;
 
     @Autowired
+    private ParticipationRepository participationRepository;
+
+    @Autowired
+    private AssessmentRepository assessmentRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
@@ -63,17 +73,17 @@ public class UserService {
 
     public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<UserDto> getUsers() {
         return userRepository.findAll().stream()
-                .map(user->new UserDto(user))
+                .map(user -> new UserDto(user))
                 .sorted(Comparator.comparing(UserDto::getUsername))
                 .collect(Collectors.toList());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser createVolunteerWithAuth(String name, String username, String email, AuthUser.Type type, State state) {
+    public AuthUser createVolunteerWithAuth(String name, String username, String email, AuthUser.Type type,
+            State state) {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new HEException(DUPLICATE_USER, username);
         }
@@ -84,7 +94,8 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser createMemberWithAuth(String name, String username, String email, AuthUser.Type type, Institution institution, State state) {
+    public AuthUser createMemberWithAuth(String name, String username, String email, AuthUser.Type type,
+            Institution institution, State state) {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new HEException(DUPLICATE_USER, username);
         }
@@ -94,8 +105,7 @@ public class UserService {
         return member.getAuthUser();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED,
-            propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public UserDto registerUser(RegisterUserDto registerUserDto, MultipartFile document) throws IOException {
         AuthNormalUser authUser = createAuthNormalUser(registerUserDto, State.SUBMITTED);
 
@@ -113,7 +123,8 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public RegisterUserDto confirmRegistration(RegisterUserDto registerUserDto) {
-        AuthNormalUser authUser = (AuthNormalUser) authUserRepository.findAuthUserByUsername(registerUserDto.getUsername()).orElse(null);
+        AuthNormalUser authUser = (AuthNormalUser) authUserRepository
+                .findAuthUserByUsername(registerUserDto.getUsername()).orElse(null);
 
         if (authUser == null) {
             throw new HEException(ErrorMessage.USER_NOT_FOUND, registerUserDto.getUsername());
@@ -129,13 +140,13 @@ public class UserService {
         } catch (HEException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
                 authUser.generateConfirmationToken();
-            } else throw new HEException(e.getErrorMessage());
+            } else
+                throw new HEException(e.getErrorMessage());
         }
 
         authUser.getUser().setState(State.ACTIVE);
         return new RegisterUserDto(authUser);
     }
-
 
     private AuthNormalUser createAuthNormalUser(RegisterUserDto registerUserDto, State state) {
         if (registerUserDto.getUsername() == null || registerUserDto.getUsername().trim().length() == 0) {
@@ -150,14 +161,15 @@ public class UserService {
             throw new HEException(USERNAME_ALREADY_EXIST, registerUserDto.getUsername());
         }
 
-
         User user = switch (registerUserDto.getRole()) {
             case VOLUNTEER -> new Volunteer(registerUserDto.getName(),
                     registerUserDto.getUsername(), registerUserDto.getEmail(), AuthUser.Type.NORMAL, state);
             case MEMBER -> {
-                Institution institution = institutionRepository.findById(registerUserDto.getInstitutionId()).orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, registerUserDto.getInstitutionId()));
+                Institution institution = institutionRepository.findById(registerUserDto.getInstitutionId())
+                        .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, registerUserDto.getInstitutionId()));
                 yield new Member(registerUserDto.getName(),
-                        registerUserDto.getUsername(), registerUserDto.getEmail(), AuthUser.Type.NORMAL, institution, state);
+                        registerUserDto.getUsername(), registerUserDto.getEmail(), AuthUser.Type.NORMAL, institution,
+                        state);
             }
             case ADMIN -> new Admin(registerUserDto.getName(),
                     registerUserDto.getUsername(), registerUserDto.getEmail(), AuthUser.Type.NORMAL, state);
@@ -188,8 +200,9 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public RegisterUserDto validateUser(Integer userId) {
-        AuthNormalUser authUser = (AuthNormalUser) authUserRepository.findById(userId).orElseThrow(() -> new HEException(ErrorMessage.AUTHUSER_NOT_FOUND));
-        if (authUser.isActive() || authUser.getUser().getState().equals(User.State.ACTIVE)){
+        AuthNormalUser authUser = (AuthNormalUser) authUserRepository.findById(userId)
+                .orElseThrow(() -> new HEException(ErrorMessage.AUTHUSER_NOT_FOUND));
+        if (authUser.isActive() || authUser.getUser().getState().equals(User.State.ACTIVE)) {
             throw new HEException(ErrorMessage.USER_ALREADY_ACTIVE, authUser.getUsername());
         }
 
@@ -200,10 +213,20 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public InstitutionDto getInstitution(Integer userId) {
-        AuthUser authUser = authUserRepository.findById(userId).orElseThrow(() -> new HEException(ErrorMessage.AUTHUSER_NOT_FOUND));
+        AuthUser authUser = authUserRepository.findById(userId)
+                .orElseThrow(() -> new HEException(ErrorMessage.AUTHUSER_NOT_FOUND));
         Member member = (Member) authUser.getUser();
 
         return new InstitutionDto(member.getInstitution(), true, true);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<ParticipationDto> getVolunteerParticipations(Integer userId) {
+        if (userId == null)
+            throw new HEException(USER_NOT_FOUND);
+
+        return participationRepository.getParticipationsByVolunteerId(userId).stream()
+                .map(ParticipationDto::new)
+                .toList();
+    }
 }
