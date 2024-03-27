@@ -67,19 +67,6 @@
             </template>
             <span>Apply to Activiy</span>
           </v-tooltip>
-          <v-tooltip v-if="isAssessable(item)" bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon
-                class="mr-2 action-button"
-                color="blue"
-                v-on="on"
-                data-cy="assessmentButton"
-                @click="newAssessment(item)"
-                >mdi-square-edit-outline
-              </v-icon>
-            </template>
-            <span>Write Assessment</span>
-          </v-tooltip>
         </template>
       </v-data-table>
       <enrollment-dialog
