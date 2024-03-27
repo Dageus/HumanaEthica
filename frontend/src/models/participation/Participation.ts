@@ -4,7 +4,7 @@ export default class Participation {
   id: number | null = null;
   activityId: number | null = null;
   volunteerId: number | null = null;
-  rating!: number;
+  rating: number | null = null;
   acceptanceDate!: string;
 
   constructor(jsonObj?: Participation) {
