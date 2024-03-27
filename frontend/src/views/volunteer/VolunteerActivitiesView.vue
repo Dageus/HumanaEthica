@@ -106,7 +106,6 @@ import RemoteServices from '@/services/RemoteServices';
 import Activity from '@/models/activity/Activity';
 import AssessmentDialog from '@/views/volunteer/AssessmentDialog.vue';
 import Enrollment from '@/models/enrollment/Enrollment';
-import AssessmentDialog from '@/views/volunteer/AssessmentDialog.vue';
 import EnrollmentDialog from '@/views/volunteer/EnrollmentDialog.vue';
 import { show } from 'cli-cursor';
 import Participation from '@/models/participation/Participation';
@@ -116,7 +115,6 @@ import Assessment from '@/models/assessment/Assessment';
   components: {
     'assessment-dialog': AssessmentDialog,
     'enrollment-dialog': EnrollmentDialog,
-    'assessment-dialog': AssessmentDialog,
   },
   methods: { show },
 })
@@ -125,16 +123,12 @@ export default class VolunteerActivitiesView extends Vue {
   participations: Participation[] = [];
   assessments: Assessment[] = [];
   enrollments: Enrollment[] = [];
-  participations: Participation[] = [];
-  assessments: Assessment[] = [];
 
   currentActivity: Activity | null = null;
   enrollmentDialog: boolean = false;
   assessmentDialog: boolean = false;
 
   search: string = '';
-
-  assessmentDialog: boolean = false;
 
   headers: object = [
     {
@@ -215,7 +209,6 @@ export default class VolunteerActivitiesView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  //asdasdasd
   isAssessable(activity: Activity) {
     // check if activity has ended
     if (Date.now() < new Date(activity.endingDate).getTime()) return false;
@@ -292,38 +285,7 @@ export default class VolunteerActivitiesView extends Vue {
     );
     return applicationDeadline >= today && !commonEnrollments;
   }
-  async newAssessment(activity: Activity) {
-    this.currentActivity = activity;
-    this.assessmentDialog = true;
-  }
-
-  onCreateAssessment(assessment: Assessment) {
-    this.assessments.push(assessment);
-    this.currentActivity = null;
-    this.assessmentDialog = false;
-  }
-
-  onCloseAssessmentDialog() {
-    this.currentActivity = null;
-    this.assessmentDialog = false;
-  }
-
-isAssessable(activity: Activity) {
-    // check if activity has ended
-    if (Date.now() < new Date(activity.endingDate).getTime()) return false;
-
-    // check if user has already assessed this institution
-    if (
-      this.assessments.find((a) => a.institutionId === activity.institution.id)
-    )
-      return false;
-
-    // check if user has participated in this activity
-    if (!this.participations.find((p) => p.activityId === activity.id))
-      return false;
-
-    return true;
-  }
+}
 
 </script>
 
