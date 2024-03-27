@@ -229,4 +229,14 @@ public class UserService {
                 .map(ParticipationDto::new)
                 .toList();
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AssessmentDto> getVolunteerAssessments(Integer userId) {
+      if (userId == null)
+        throw new HEException(USER_NOT_FOUND);
+
+      return assessmentRepository.getAssessmentsByVolunteerId(userId).stream()
+          .map(AssessmentDto::new)
+          .toList();
+    }
 }
