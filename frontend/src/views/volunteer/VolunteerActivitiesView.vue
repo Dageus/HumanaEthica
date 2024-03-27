@@ -76,6 +76,13 @@
         v-on:apply="onCreateAssessment"
         v-on:close-assessment-dialog="onCloseAssessmentDialog"
       />
+      <enrollment-dialog
+        v-if="currentActivity && enrollmentDialog"
+        v-model="enrollmentDialog"
+        :activity="currentActivity"
+        v-on:apply="onApplyActivity"
+        v-on:close-enrollment-dialog="onCloseEnrollmentDialog"
+      />
     </v-card>
   </div>
 </template>
@@ -94,6 +101,7 @@ import EnrollmentDialog from '@/views/volunteer/EnrollmentDialog.vue';
 @Component({
   components: {
     'assessment-dialog': AssessmentDialog,
+    'enrollment-dialog': EnrollmentDialog,
   },
   methods: { show },
 })
@@ -217,21 +225,6 @@ export default class VolunteerActivitiesView extends Vue {
       return false;
 
     return true;
-  }
-
-  async reportActivity(activity: Activity) {
-    if (activity.id !== null) {
-      try {
-        const result = await RemoteServices.reportActivity(
-          this.$store.getters.getUser.id,
-          activity.id,
-        );
-        this.activities = this.activities.filter((a) => a.id !== activity.id);
-        this.activities.unshift(result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
   }
 
   newEnrollment(activity: Activity) {
