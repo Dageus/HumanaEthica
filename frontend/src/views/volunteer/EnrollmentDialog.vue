@@ -15,6 +15,7 @@
                 'Motivation must be at least 10 characters.',
             ]"
             required
+            data-cy="motivation"
           ></v-text-field>
         </v-col>
       </v-card-text>
