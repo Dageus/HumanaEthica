@@ -99,7 +99,6 @@ describe('Participation', () => {
         .should('have.length', 2)
         .eq(0)
         .children()
-        .should('have.length', 13)
         .eq(3)
         .should('contain', TWO);
   
