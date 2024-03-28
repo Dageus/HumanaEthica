@@ -22,17 +22,9 @@ dayBeforeYesterday.setDate(now.getDate() - 2);
 
 Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
-    query: "DELETE FROM ENROLLMENT",
+    query: "DELETE FROM ACTIVITY",
     credentials: credentials,
-  });
-  cy.task('queryDatabase', {
-    query: "DELETE FROM PARTICIPATION",
-    credentials: credentials,
-  });
-  cy.task('queryDatabase', {
-    query: "DELETE FROM ASSESSMENT",
-    credentials: credentials,
-  });
+  })
   cy.task('queryDatabase', {
     query: "DELETE FROM ACTIVITY",
     credentials: credentials,

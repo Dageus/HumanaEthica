@@ -14,6 +14,7 @@ import Theme from '@/models/theme/Theme';
 import Enrollment from '@/models/enrollment/Enrollment';
 import Assessment from '@/models/assessment/Assessment';
 import Participation from '@/models/participation/Participation';
+import Participation from '@/models/participation/Participation';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;

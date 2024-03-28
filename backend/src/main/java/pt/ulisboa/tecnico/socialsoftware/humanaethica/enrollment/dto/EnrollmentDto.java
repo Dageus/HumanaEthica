@@ -22,6 +22,10 @@ public class EnrollmentDto {
             anyMatch(p -> p.getVolunteer().getId().equals(enrollment.getVolunteer().getId()));
         this.volunteerId = enrollment.getVolunteer().getId();
         this.volunteerName = enrollment.getVolunteer().getName();
+        this.participating = enrollment.getActivity().getParticipations().stream().
+            anyMatch(p -> p.getVolunteer().getId().equals(enrollment.getVolunteer().getId()));
+        this.volunteerId = enrollment.getVolunteer().getId();
+        this.volunteerName = enrollment.getVolunteer().getName();
         this.enrollmentDateTime = DateHandler.toISOString(enrollment.getEnrollmentDateTime());
         this.activityId = enrollment.getActivity().getId();
     }
@@ -40,6 +44,30 @@ public class EnrollmentDto {
 
     public void setMotivation(String motivation) {
         this.motivation = motivation;
+    }
+
+    public Integer getVolunteerId() {
+        return volunteerId;
+    }
+
+    public void setVolunteerId(Integer volunteerId) {
+        this.volunteerId = volunteerId;
+    }
+
+    public String getVolunteerName() {
+        return volunteerName;
+    }
+
+    public void setVolunteerName(String volunteerName) {
+        this.volunteerName = volunteerName;
+    }
+
+    public Boolean getParticipating() {
+        return participating;
+    }
+
+    public void setParticipating(Boolean participating) {
+        this.participating = participating;
     }
 
     public Integer getVolunteerId() {
