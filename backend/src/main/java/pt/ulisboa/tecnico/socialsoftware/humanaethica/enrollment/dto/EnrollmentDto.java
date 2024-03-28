@@ -8,8 +8,8 @@ public class EnrollmentDto {
     private String motivation;
     private boolean participating;
     private Integer volunteerId;
-    private String volunteerName;    private Integer activityId;
-
+    private String volunteerName;    
+    private Integer activityId;
     private String enrollmentDateTime;
 
 
@@ -44,30 +44,6 @@ public class EnrollmentDto {
 
     public void setMotivation(String motivation) {
         this.motivation = motivation;
-    }
-
-    public Integer getVolunteerId() {
-        return volunteerId;
-    }
-
-    public void setVolunteerId(Integer volunteerId) {
-        this.volunteerId = volunteerId;
-    }
-
-    public String getVolunteerName() {
-        return volunteerName;
-    }
-
-    public void setVolunteerName(String volunteerName) {
-        this.volunteerName = volunteerName;
-    }
-
-    public Boolean getParticipating() {
-        return participating;
-    }
-
-    public void setParticipating(Boolean participating) {
-        this.participating = participating;
     }
 
     public Integer getVolunteerId() {
